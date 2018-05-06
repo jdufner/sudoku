@@ -1,0 +1,1264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>Sudoku 2010-02</title>
+    <meta name="author" content="Jürgen Dufner"/>
+    <meta name="description" content="Sudoku"/>
+    <meta name="keywords" content="Sudoku"/>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+<!--
+* {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+table#board {
+  margin: 10px;
+}
+table#board.solved {
+  border: #00ff00 solid 2px;
+}
+td.fixed {
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  border: #999999 solid 1px;
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  margin: 0px;
+  padding: 0px;
+  cursor: default;
+}
+td.candidate {
+  font-size: 9px;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  width: 13px;
+  min-width: 13px;
+  max-width: 13px;
+  height: 13px;
+  min-height: 13px;
+  max-height: 13px;
+  cursor: default;
+}
+td.block1, td.block3, td.block5, td.block7, td.block9 {
+  background-color: #FFFFFF;
+}
+td.block2, td.block4, td.block6, td.block8 {
+  background-color: #CCCCCC;
+}
+td.original {
+  color: #0000ff;
+}
+td.conflict {
+  border: #ff0000 solid 1px;
+}
+td.error {
+  color: #FF0000;
+}
+/* Kandidaten per Knopf hervorheben */
+td.highlight1 {
+  background-color: #ffff99; /* gelb */
+}
+/* Kandidaten onmouseover / onmouseout */
+td.highlight2 {
+  background-color: #ff9999; /* rot */
+}
+/* Fixed / Zellen */
+td.highlight3 {
+  background-color: #99ff99; /* gruen */
+}
+td.hide {
+  visibility: hidden;
+}
+div.candidateButtonOff {
+  margin: 2px;
+  padding: 2px;
+  border: 2px #999999 outset;
+  background-color: #ffff99;
+  cursor: default;
+}
+div.candidateButtonOn {
+  margin: 2px;
+  padding: 2px;
+  border: 2px #999999 inset;
+  background-color: #cccc99;
+  cursor: default;
+}
+-->
+    </style>
+  </head>
+  <body>
+    <h1>Sudoku 2010-02</h1>
+    <div id="sudoku" style="float:left"></div>
+    <div style="float:left; margin-left:10px;">
+      <div>
+        <fieldset>
+          <legend>Statistik</legend>
+          <p>Gesetzte Zellen: <input id="fixedCellNumber" style="float:right;" type="text" size="3" readonly="true" value=""/></p>
+          <p>Verbleibende Kandidaten: <input id="candidateNumber" style="float:right;" type="text" size="3" readonly="true" value=""/></p>
+        </fieldset>
+      </div>
+      <!-- float:left; margin-left:10px; -->
+      <div style="">
+        <fieldset>
+          <legend>Lösung (<span id="solution" style="cursor:default;" onclick="switchVisibility('solution');">+</span>)</legend>
+          <div id="solutionBlock" style="visibility:hidden; display:none;">
+            <div id="steps" style="height:220px; min-height:220px; max-height:220px; width:600px; min-width:600px; max-width:600px; overflow:auto;"></div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+
+    <div id="candidateButtons" style="float:left; margin-left:10px;"></div>
+    <div id="buttons" style="clear:both; width:100%; margin-top:10px;">
+      <select id="quests" name="quests" size="1"></select>
+      <input type="button" value="Laden" onclick="copyAndLoadSudoku()"/><br/>
+      <input id="sudokuAsString" type="text" value="" size="81"/>
+      <input id="incloseCandidates" type="checkbox">inkl. Kandidaten</input><input type="button" value="Laden" onclick="loadSudoku()"/><input type="button" value="Speichern" onclick="saveSudoku()"/><br/>
+      <input type="button" value="Kandidaten entfernen" onclick="removeAllCandidates()"/><input type="button" value="Reset" onclick="resetAllCandidates()"/><input type="button" value="Leeren" onclick="emptyCandidates()"/><input id="hideButton" type="button" value="Ausblenden" onclick="hideCandidates()"/><br/>
+      <input type="button" value="Aus Cookie laden" onclick="loadSudokuFromCookie()"/><input type="button" value="In Cookie speichern" onclick="saveSudokuInCookie()"/><br/>
+      <input id="undoButton" type="button" value="&lt;&lt; Zurück &lt;&lt;" onclick="undoCommand();"/><input id="doButton" type="button" value="&gt;&gt; Vor &gt;&gt;" onclick="doCommand();"/><br/>
+      <fieldset style="width:45%;">
+        <legend>Spielhilfe (<span id="configHelp" style="cursor:default;" onclick="switchVisibility('configHelp');">+</span>)</legend>
+        <div id="configHelpBlock" style="visibility:hidden; display:none;">
+          <input id="showConflicts" type="checkbox" checked="true" onclick="turnShowConflicts();saveConfig();">Konflikte zwischen Zellen anzeigen</input><br/>
+          <input id="showErrors" type="checkbox" checked="true" onclick="turnShowErrors();saveConfig();">Fehler zur Lösung anzeigen</input><br/>
+          <input id="kandidatenEntfernen" type="radio" name="spielweise" value="kandidatenEntfernen" checked="true" onclick="saveConfig();">Kandidaten entfernen</input>
+          <input id="kandidatenSetzen" type="radio" name="spielweise" value="kandidatenSetzen" onclick="saveConfig();">Kandidaten setzen</input>
+        </div>
+      </fieldset>
+      <fieldset style="float:left; width:45%;">
+        <legend>Zellen (<span id="configCellHighlight" style="cursor:default;" onclick="switchVisibility('configCellHighlight');">+</span>)</legend>
+        <div id="configCellHighlightBlock" style="visibility:hidden; display:none;">
+          <input id="highlightFixed" type="checkbox" checked="true">Zellen hervorheben</input><br/>
+          <input id="highlightAllFixed" type="checkbox">Auch andere Zellen hervorheben</input><br/>
+          <input id="highlightAllFixedAndCandidates" type="checkbox">Auch andere Kandidaten hervorheben</input><br/>
+        </div>
+      </fieldset>
+      <fieldset style="float:left; width:45%;">
+        <legend>Kandidaten (<span id="configCandidateHighlight" style="cursor:default;" onclick="switchVisibility('configCandidateHighlight');">+</span>)</legend>
+        <div id="configCandidateHighlightBlock" style="visibility:hidden; display:none;">
+          <input id="highlightCandidates" type="checkbox" checked="true">Kandidaten hervorheben</input><br/>
+          <input id="highlightAllCandidates" type="checkbox">Auch andere Kandidaten hervorheben</input><br/>
+          <input id="highlightAllCandidatesAndFixed" type="checkbox">Auch andere Zellen hervorheben</input><br/>
+        </div>
+      </fieldset>
+      <div style="clear:both"></div>
+    </div>
+  </body>
+  <script type="text/javascript" language="javascript">
+<!--
+var size = 9;
+var subSize = 3;
+var original;
+var doCmd = new Array();
+var undoCmd = new Array();
+var updateStatisticsId;
+var sudoku = null;
+var sudokus = [
+new solution(56621, "3...5.1...5.....72...9..34..1...3..4.6...8.5....71.......29..8.73.....2...2......", "374852169159634872286971345817563294963428751425719638641297583738145926592386417", "sehr leicht", true, [
+new step("SIMPLE", "3...5.1...5.....72...9..34..1...3..4.6...8.5....71.......29..8.73.....2...2......", 24, 513, ["2RM1356","3RM1235","4RM123579","6RM13589","8RM1234578","9RM123457","10RM2357","12RM2357","13RM2579","14RM12579","15RM235789","16RM123457","20RM134569","19RM34579","21RM23459","24RM34589","23RM13459","28RM13467","27RM123479","30RM12346","32RM1345789","31RM1234789","35RM1234578","34RM1345","39RM12568","40RM12356789","37RM135678","43RM134568","41RM1356789","47RM13567","48RM1267","45RM24568","46RM1367","52RM13457","51RM1378","56RM12356789","55RM23789","54RM12457","53RM124578","60RM2389","57RM23789","63RM2489","61RM12389","69RM23789","70RM12378","72RM23478","66RM237","67RM2379","68RM123579","77RM1259","78RM2389","79RM1238","80RM24578","73RM237","74RM123567","76RM279","81RM248"])
+,new step("SIMPLE", "3,(24789),(46789),(468),5,(2467),1,(69),(689),(14689),5,(14689),(13468),(3468),(146),(689),7,2,(1268),(278),(1678),9,(2678),(1267),3,4,(568),(2589),1,(5789),(56),(26),3,(26789),(69),4,(249),6,(3479),4,(24),8,(279),5,(1379),(24589),(2489),(34589),7,1,(24569),(2689),(369),(3689),(1456),4,(1456),2,9,(14567),(4567),8,(13567),7,3,(145689),(14568),(468),(1456),(4569),2,(1569),(145689),(489),2,(134568),(34678),(14567),(45679),(1369),(135679)", 26, 222, ["2RM13456","4RM2479","39RM4568","66RM2347","37RM4568","67RM2479","41RM1345678","47RM13456","13RM2479","73RM2347","74RM1234567","76RM2479","51RM13478","55RM234789","60RM2489","57RM234789","61RM2489"])
+,new step("SIMPLE", "3,(2789),(46789),(68),5,(2467),1,(69),(689),(14689),5,(14689),(1368),(3468),(146),(689),7,2,(1268),(278),(1678),9,(2678),(1267),3,4,(568),(2589),1,(5789),(56),(26),3,(26789),(69),4,(29),6,(379),4,2,8,(279),5,(1379),(24589),(289),(34589),7,1,(2569),(2689),(369),(3689),(156),4,(156),2,9,(1567),(567),8,(13567),7,3,(15689),(1568),(468),(1456),(4569),2,(1569),(15689),(89),2,(13568),(34678),(14567),(45679),(1369),(135679)", 27, 204, ["51RM123478","37RM24568","23RM1259","43RM24568","32RM12345789"])
+,new step("SIMPLE", "3,(2789),(46789),(68),5,(2467),1,(69),(689),(14689),5,(14689),(1368),(3468),(146),(689),7,2,(1268),(278),(1678),9,(678),(1267),3,4,(568),(2589),1,(5789),(56),6,3,(26789),(69),4,9,6,(379),4,2,8,(79),5,(1379),(24589),(289),(34589),7,1,(569),(2689),(369),(3689),(156),4,(156),2,9,(1567),(567),8,(13567),7,3,(15689),(1568),(468),(1456),(4569),2,(1569),(15689),(89),2,(13568),(34678),(14567),(45679),(1369),(135679)", 29, 197, ["35RM1346","34RM1346","39RM1245689","68RM12569","77RM12569","43RM245689","10RM379","47RM169","73RM379","14RM12569","48RM169","45RM245689","46RM13679","51RM1234678","23RM12569","28RM13679","30RM169","31RM1234678"])
+,new step("SIMPLE", "3,(2789),(46789),(68),5,(2467),1,(69),(689),(1468),5,(14689),(1368),(348),(146),(689),7,2,(1268),(278),(1678),9,(78),(1267),3,4,(568),(258),1,(578),5,6,3,(2789),9,4,9,6,(37),4,2,8,7,5,(137),(2458),(28),(3458),7,1,(59),(2689),(369),(3689),(156),4,(156),2,9,(1567),(567),8,(13567),7,3,(15689),(1568),(48),(1456),(4569),2,(1569),(1568),(89),2,(13568),(3478),(14567),(45679),(1369),(135679)", 32, 176, ["34RM1345679","39RM2456789","67RM24579","8RM245789","79RM137","80RM245789","45RM2456789","76RM24579","52RM4579","51RM12345678","54RM4579","53RM245789","28RM134569","30RM134569","61RM137"])
+,new step("SIMPLE", "3,(2789),(46789),(68),5,(2467),1,6,(689),(1468),5,(14689),(1368),(348),(146),(689),7,2,(1268),(278),(1678),9,(78),(1267),3,4,(568),(28),1,(78),5,6,3,(28),9,4,9,6,3,4,2,8,7,5,(13),(2458),(28),(3458),7,1,9,(268),(36),(368),(156),4,(156),2,9,(1567),(56),8,(13567),7,3,(15689),(168),(48),(1456),(4569),2,(1569),(1568),(89),2,(1368),(3478),(14567),(4569),(136),(135679)", 35, 157, ["3RM1356","4RM1356","6RM1356","53RM2456789","9RM1234567","80RM2456789","27RM123467","48RM12369","45RM23456789","16RM123467"])
+,new step("SIMPLE", "3,(2789),(4789),8,5,(247),1,6,(89),(1468),5,(14689),(1368),(348),(146),(89),7,2,(1268),(278),(1678),9,(78),(1267),3,4,(58),(28),1,(78),5,6,3,(28),9,4,9,6,3,4,2,8,7,5,1,(2458),(28),(458),7,1,9,(268),3,(368),(156),4,(156),2,9,(1567),(56),8,(13567),7,3,(15689),(168),(48),(1456),(4569),2,(1569),(1568),(89),2,(1368),(3478),(14567),(4569),(13),(135679)", 38, 144, ["2RM13568","3RM13568","72RM124","67RM245789","9RM13568","80RM23456789","13RM245789","14RM589","76RM245789","81RM124","54RM134579","23RM589","63RM124"])
+,new step("SIMPLE", "3,(279),(479),8,5,(247),1,6,9,(1468),5,(14689),(136),(34),(146),(89),7,2,(1268),(278),(1678),9,7,(1267),3,4,(58),(28),1,(78),5,6,3,(28),9,4,9,6,3,4,2,8,7,5,1,(2458),(28),(458),7,1,9,(268),3,(68),(156),4,(156),2,9,(1567),(56),8,(3567),7,3,(15689),(16),(48),(1456),(4569),2,(569),(1568),(89),2,(136),(3478),(14567),(4569),1,(35679)", 41, 128, ["2RM135689","3RM135689","72RM1249","6RM5789","77RM125679","78RM12","73RM12","76RM12","16RM1234679","20RM3479","81RM1249","21RM3479","24RM345789"])
+,new step("SIMPLE", "3,(27),(47),8,5,(24),1,6,9,(1468),5,(14689),(136),(34),(146),8,7,2,(1268),(28),(168),9,7,(126),3,4,(58),(28),1,(78),5,6,3,(28),9,4,9,6,3,4,2,8,7,5,1,(2458),(28),(458),7,1,9,(268),3,(68),(156),4,(156),2,9,(1567),(56),8,(3567),7,3,(15689),(16),(48),(1456),(4569),2,(56),(568),(89),2,(36),(348),(4567),(4569),1,(3567)", 42, 114, ["52RM1378","34RM1378","10RM2578","12RM2578","27RM12346789"])
+,new step("SIMPLE", "3,(27),(47),8,5,(24),1,6,9,(146),5,(1469),(136),(34),(146),8,7,2,(1268),(28),(168),9,7,(126),3,4,5,(28),1,(78),5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,(2458),(28),(458),7,1,9,(26),3,(68),(156),4,(156),2,9,(1567),(56),8,(3567),7,3,(15689),(16),(48),(1456),(4569),2,(56),(568),(89),2,(36),(348),(4567),(4569),1,(3567)", 44, 107, ["52RM12345789","72RM12459","81RM12459","28RM1234569","63RM12459"])
+,new step("SIMPLE", "3,(27),(47),8,5,(24),1,6,9,(146),5,(1469),(136),(34),(146),8,7,2,(1268),(28),(168),9,7,(126),3,4,5,8,1,(78),5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,(2458),(28),(458),7,1,9,6,3,(68),(156),4,(156),2,9,(1567),(56),8,(367),7,3,(15689),(16),(48),(1456),(4569),2,6,(568),(89),2,(36),(348),(4567),(4569),1,(367)", 47, 99, ["69RM2367","70RM123678","66RM2367","67RM2367","79RM123678","47RM13689","73RM3789","48RM13689","46RM136789","19RM3789","81RM1245689","54RM12345679","30RM12345689","63RM1245689","61RM123678"])
+,new step("SIMPLE", "3,(27),(47),8,5,(24),1,6,9,(146),5,(1469),(136),(34),(146),8,7,2,(126),(28),(168),9,7,(126),3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,(245),2,(45),7,1,9,6,3,8,(156),4,(156),2,9,(1567),5,8,(37),7,3,(1589),1,(48),(145),(459),2,6,(56),(89),2,(36),(348),(4567),(459),1,(37)", 52, 79, ["69RM123679","70RM1235678","2RM123456","3RM237","20RM123456","66RM12367","55RM24589","60RM124589","79RM1235678","57RM24589","13RM1245789","46RM1236789"])
+,new step("SIMPLE", "3,7,4,8,5,(24),1,6,9,(146),5,(1469),(36),(34),(146),8,7,2,(126),8,(168),9,7,(126),3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,(45),2,(45),7,1,9,6,3,8,(16),4,(16),2,9,(67),5,8,(37),7,3,(589),1,(48),(45),(49),2,6,(56),(89),2,(36),(348),(4567),(49),1,(37)", 55, 63, ["21RM345789","6RM13456789","10RM34578","12RM234578","74RM12345678","48RM2347"])
+,new step("SIMPLE", "3,7,4,8,5,2,1,6,9,(16),5,(169),(36),(34),(146),8,7,2,(126),8,(16),9,7,(126),3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,(45),2,5,7,1,9,6,3,8,(16),4,(16),2,9,(67),5,8,(37),7,3,(589),1,(48),(45),(49),2,6,(56),9,2,(36),(348),(4567),(49),1,(37)", 58, 54, ["66RM234579","24RM235789","79RM129","46RM12356789"])
+,new step("SIMPLE", "3,7,4,8,5,2,1,6,9,(16),5,(169),(36),(34),(146),8,7,2,(126),8,(16),9,7,(16),3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,4,2,5,7,1,9,6,3,8,(16),4,(16),2,9,(67),5,8,(37),7,3,8,1,(48),(45),(49),2,6,(56),9,2,(36),(348),(4567),4,1,(37)", 61, 46, ["70RM12345678","68RM123678","77RM1249","78RM1249"])
+,new step("SIMPLE", "3,7,4,8,5,2,1,6,9,(16),5,(169),(36),(34),(146),8,7,2,(126),8,(16),9,7,(16),3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,4,2,5,7,1,9,6,3,8,(16),4,(16),2,9,(67),5,8,(37),7,3,8,1,4,(45),9,2,6,(56),9,2,(36),(38),(567),4,1,(37)", 63, 40, ["69RM12346789","14RM1245679"])
+,new step("SIMPLE", "3,7,4,8,5,2,1,6,9,(16),5,(169),(36),3,(146),8,7,2,(126),8,(16),9,7,(16),3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,4,2,5,7,1,9,6,3,8,(16),4,(16),2,9,(67),5,8,(37),7,3,8,1,4,5,9,2,6,(56),9,2,(36),(38),(567),4,1,(37)", 65, 36, ["77RM12345679","78RM1234589","13RM235789"])
+,new step("SIMPLE", "3,7,4,8,5,2,1,6,9,(16),5,(169),6,3,(146),8,7,2,(126),8,(16),9,7,(16),3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,4,2,5,7,1,9,6,3,8,(16),4,(16),2,9,(67),5,8,(37),7,3,8,1,4,5,9,2,6,(56),9,2,(36),8,(67),4,1,(37)", 67, 31, ["24RM2356789","10RM235678","12RM235678","15RM2356789","76RM12456789"])
+,new step("SIMPLE", "3,7,4,8,5,2,1,6,9,1,5,(19),6,3,(14),8,7,2,(126),8,(16),9,7,1,3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,4,2,5,7,1,9,6,3,8,(16),4,(16),2,9,(67),5,8,(37),7,3,8,1,4,5,9,2,6,(56),9,2,3,8,(67),4,1,(37)", 70, 23, ["19RM1345789","21RM1345789","55RM134789","81RM123489","12RM12345678","15RM12356789"])
+,new step("SIMPLE", "3,7,4,8,5,2,1,6,9,1,5,9,6,3,4,8,7,2,(26),8,6,9,7,1,3,4,5,8,1,7,5,6,3,2,9,4,9,6,3,4,2,8,7,5,1,4,2,5,7,1,9,6,3,8,6,4,(16),2,9,(67),5,8,(37),7,3,8,1,4,5,9,2,6,(56),9,2,3,8,(67),4,1,7", 75, 12, ["19RM13456789","60RM245689","78RM1234789","57RM23456789","73RM12346789","63RM12456789"])
+])
+,new solution(58821, "8.......314.3....7..6...2......81.6.7.......1..57..4...54.281..9.2..............8", "827145693149362857536879214493581762768294531215736489354928176982617345671453928", "sehr leicht", true, [
+new step("SIMPLE", "8.......314.3....7..6...2......81.6.7.......1..57..4...54.281..9.2..............8", 24, 513, ["2RM134568","3RM1234568","4RM378","5RM238","6RM138","7RM123478","8RM23678","12RM12345678","14RM123478","15RM13478","16RM12347","17RM123467","20RM124568","19RM1246789","22RM2367","24RM12368","23RM2368","26RM2367","28RM156789","27RM123678","30RM1245678","29RM145678","31RM13678","36RM134678","34RM12468","39RM124567","40RM1378","38RM1457","43RM12467","44RM1467","41RM1278","42RM178","47RM457","46RM145789","51RM14578","50RM124578","55RM1245789","54RM1345678","53RM14567","58RM1234578","63RM1234578","62RM124568","69RM1289","70RM12489","71RM12689","72RM123789","65RM2459","67RM23789","68RM289","77RM28","78RM128","79RM1248","80RM168","73RM1245789","74RM24589","75RM245689","76RM2378"])
+,new step("SIMPLE", "8,(279),(79),(124569),(145679),(245679),(569),(1459),3,1,4,9,3,(569),(2569),(5689),(589),7,(35),(379),6,(14589),(14579),(4579),2,(14589),(459),(234),(239),(39),(2459),8,1,(3579),6,(259),7,(23689),(389),(24569),(34569),(234569),(3589),(23589),1,(236),(123689),5,7,(369),(2369),4,(2389),(29),(36),5,4,(69),2,8,1,(379),(69),9,(13678),2,(1456),(134567),(34567),(3567),(3457),(456),(36),(1367),(137),(14569),(1345679),(345679),(35679),(234579),8", 25, 223, ["2RM14689","17RM13479","20RM14689","3RM1245689","39RM24569","30RM24569","14RM13479","15RM13479","16RM13479"])
+,new step("SIMPLE", "8,(27),7,(124569),(145679),(245679),(569),(1459),3,1,4,9,3,(56),(256),(568),(58),7,(35),(37),6,(14589),(14579),(4579),2,(14589),(459),(234),(239),3,(2459),8,1,(3579),6,(259),7,(23689),(38),(24569),(34569),(234569),(3589),(23589),1,(236),(123689),5,7,(369),(2369),4,(2389),(29),(36),5,4,(69),2,8,1,(379),(69),9,(13678),2,(1456),(134567),(34567),(3567),(3457),(456),(36),(1367),(137),(14569),(1345679),(345679),(35679),(234579),8", 27, 212, ["2RM1346789","20RM146789","34RM1368","5RM378","39RM2345679","6RM378","38RM357","28RM135678","47RM357","29RM135678","75RM2345679","46RM357"])
+,new step("SIMPLE", "8,2,7,(124569),(14569),(24569),(569),(1459),3,1,4,9,3,(56),(256),(568),(58),7,(35),3,6,(14589),(14579),(4579),2,(14589),(459),(24),(29),3,(2459),8,1,(579),6,(259),7,(2689),8,(24569),(34569),(234569),(3589),(23589),1,(26),(12689),5,7,(369),(2369),4,(2389),(29),(36),5,4,(69),2,8,1,(379),(69),9,(13678),2,(1456),(134567),(34567),(3567),(3457),(456),(36),(1367),1,(14569),(1345679),(345679),(35679),(234579),8", 31, 195, ["19RM12346789","4RM2378","65RM123459","6RM2378","38RM1234578","43RM178","77RM18","44RM178","47RM234578","74RM1234589","29RM2345","76RM18"])
+,new step("SIMPLE", "8,2,7,(14569),(14569),(4569),(569),(1459),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(14589),(14579),(4579),2,(14589),(459),(24),9,3,(2459),8,1,(579),6,(259),7,(69),8,(24569),(34569),(234569),(359),(2359),1,(26),(169),5,7,(369),(2369),4,(2389),(29),(36),5,4,(69),2,8,1,(379),(69),9,(678),2,(1456),(134567),(34567),(3567),(3457),(456),(36),(67),1,(4569),(345679),(345679),(35679),(234579),8", 33, 177, ["36RM13689","34RM13689","22RM2356","24RM2356","23RM2356","38RM2345789","26RM2356","27RM2356","47RM2345789","31RM13689"])
+,new step("SIMPLE", "8,2,7,(14569),(14569),(4569),(569),(1459),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(1489),(1479),(479),2,(1489),(49),(24),9,3,(245),8,1,(57),6,(25),7,6,8,(24569),(34569),(234569),(359),(2359),1,(26),(16),5,7,(369),(2369),4,(2389),(29),(36),5,4,(69),2,8,1,(379),(69),9,(678),2,(1456),(134567),(34567),(3567),(3457),(456),(36),(67),1,(4569),(345679),(345679),(35679),(234579),8", 34, 166, ["65RM234569","40RM1678","41RM1678","42RM1678","47RM23456789","74RM234569","46RM356789"])
+,new step("SIMPLE", "8,2,7,(14569),(14569),(4569),(569),(1459),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(1489),(1479),(479),2,(1489),(49),(24),9,3,(245),8,1,(57),6,(25),7,6,8,(2459),(3459),(23459),(359),(2359),1,2,1,5,7,(369),(2369),4,(2389),(29),(36),5,4,(69),2,8,1,(379),(69),9,(78),2,(1456),(134567),(34567),(3567),(3457),(456),(36),7,1,(4569),(345679),(345679),(35679),(234579),8", 37, 156, ["51RM12457","65RM12345679","54RM12457","53RM12457","77RM178","78RM178","79RM178","28RM12356789","80RM178"])
+,new step("SIMPLE", "8,2,7,(14569),(14569),(4569),(569),(1459),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(1489),(1479),(479),2,(1489),(49),4,9,3,(245),8,1,(57),6,(25),7,6,8,(2459),(3459),(23459),(359),(2359),1,2,1,5,7,(369),(369),4,(389),9,(36),5,4,(69),2,8,1,(379),(69),9,8,2,(1456),(134567),(34567),(3567),(3457),(456),(36),7,1,(4569),(34569),(34569),(3569),(23459),8", 40, 144, ["51RM124579","50RM124579","53RM1245679","43RM1469","44RM1469","27RM13789","63RM13789","31RM134689"])
+,new step("SIMPLE", "8,2,7,(14569),(14569),(4569),(569),(1459),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(1489),(1479),(479),2,(1489),4,4,9,3,(25),8,1,(57),6,(25),7,6,8,(2459),(3459),(23459),(35),(235),1,2,1,5,7,(36),(36),4,(38),9,(36),5,4,(69),2,8,1,(379),6,9,8,2,(1456),(134567),(34567),(3567),(3457),(456),(36),7,1,(4569),(34569),(34569),(3569),(23459),8", 42, 134, ["70RM168","72RM1346789","22RM23456","55RM124568","24RM23456","23RM23456","8RM2347","26RM234567","79RM168","58RM124568"])
+,new step("SIMPLE", "8,2,7,(14569),(14569),(4569),(569),(159),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(189),(179),(79),2,(189),4,4,9,3,(25),8,1,(57),6,(25),7,6,8,(2459),(3459),(23459),(35),(235),1,2,1,5,7,(36),(36),4,(38),9,3,5,4,9,2,8,1,(379),6,9,8,2,(1456),(134567),(34567),(357),(3457),5,(36),7,1,(4569),(34569),(34569),(359),(23459),8", 45, 120, ["69RM2589","36RM13456789","70RM125689","71RM125689","4RM379","40RM379","67RM2589","68RM2589","77RM289","78RM289","79RM1568","80RM1568","73RM12345789","76RM23789","22RM379","62RM12345689"])
+,new step("SIMPLE", "8,2,7,(1456),(14569),(4569),(569),(159),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(18),(179),(79),2,(189),4,4,9,3,(25),8,1,(57),6,2,7,6,8,(245),(3459),(23459),(35),(235),1,2,1,5,7,(36),(36),4,(38),9,3,5,4,9,2,8,1,7,6,9,8,2,(146),(13467),(3467),(37),(347),5,6,7,1,(456),(3456),(3456),(39),(2349),8", 48, 100, ["70RM15678","71RM15678","77RM1678","78RM1678","44RM12469","31RM1234689","76RM1678"])
+,new step("SIMPLE", "8,2,7,(1456),(14569),(4569),(569),(159),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(18),(179),(79),2,(189),4,4,9,3,5,8,1,(57),6,2,7,6,8,(245),(3459),(23459),(35),(35),1,2,1,5,7,(36),(36),4,(38),9,3,5,4,9,2,8,1,7,6,9,8,2,(146),(13467),(3467),3,(34),5,6,7,1,(45),(345),(345),(39),(2349),8", 50, 91, ["69RM23589","71RM12356789","34RM12345689","4RM3579","40RM135789","68RM23589","43RM1234","41RM1578","79RM12345678","80RM135678","42RM1578","76RM3579"])
+,new step("SIMPLE", "8,2,7,(146),(14569),(4569),(569),(159),3,1,4,9,3,(56),(256),(568),(58),7,5,3,6,(18),(179),(79),2,(189),4,4,9,3,5,8,1,7,6,2,7,6,8,(24),(349),(2349),5,(35),1,2,1,5,7,(36),(36),4,(38),9,3,5,4,9,2,8,1,7,6,9,8,2,(146),(1467),(467),3,4,5,6,7,1,4,(345),(345),9,(249),8", 55, 74, ["69RM234589","4RM34579","40RM34579","7RM1234579","67RM2345789","68RM234589","77RM1246789","78RM1246789","44RM12456789","80RM13456789","16RM1234579"])
+,new step("SIMPLE", "8,2,7,(16),(14569),(4569),6,(159),3,1,4,9,3,(56),(256),(68),(58),7,5,3,6,(18),(179),(79),2,(189),4,4,9,3,5,8,1,7,6,2,7,6,8,2,(349),(2349),5,3,1,2,1,5,7,(36),(36),4,(38),9,3,5,4,9,2,8,1,7,6,9,8,2,(16),(167),(67),3,4,5,6,7,1,4,(35),(35),9,2,8", 59, 57, ["4RM23678","5RM23678","6RM23678","53RM12345679","41RM1235678","42RM1235678","16RM12345679"])
+,new step("SIMPLE", "8,2,7,1,(1459),(459),6,(159),3,1,4,9,3,(56),(256),8,(58),7,5,3,6,(18),(179),(79),2,(189),4,4,9,3,5,8,1,7,6,2,7,6,8,2,(49),(49),5,3,1,2,1,5,7,(36),(36),4,8,9,3,5,4,9,2,8,1,7,6,9,8,2,(16),(167),(67),3,4,5,6,7,1,4,(35),(35),9,2,8", 62, 46, ["17RM12346789","5RM123678","22RM1234579","67RM1234579","23RM13","8RM123678","26RM234678"])
+,new step("SIMPLE", "8,2,7,1,(459),(459),6,(59),3,1,4,9,3,(56),(256),8,5,7,5,3,6,8,(79),(79),2,(19),4,4,9,3,5,8,1,7,6,2,7,6,8,2,(49),(49),5,3,1,2,1,5,7,(36),(36),4,8,9,3,5,4,9,2,8,1,7,6,9,8,2,6,(167),(67),3,4,5,6,7,1,4,(35),(35),9,2,8", 65, 36, ["69RM2345689","68RM2345689","8RM2345678","14RM1345789","15RM1345789"])
+,new step("SIMPLE", "8,2,7,1,(459),(459),6,9,3,1,4,9,3,6,(26),8,5,7,5,3,6,8,(79),(79),2,(19),4,4,9,3,5,8,1,7,6,2,7,6,8,2,(49),(49),5,3,1,2,1,5,7,(36),(36),4,8,9,3,5,4,9,2,8,1,7,6,9,8,2,6,(17),7,3,4,5,6,7,1,4,(35),(35),9,2,8", 68, 28, ["50RM268","5RM1236789","6RM1236789","24RM178","68RM23456789","26RM23456789","15RM13456789"])
+,new step("SIMPLE", "8,2,7,1,(45),(45),6,9,3,1,4,9,3,6,2,8,5,7,5,3,6,8,(79),9,2,1,4,4,9,3,5,8,1,7,6,2,7,6,8,2,(49),(49),5,3,1,2,1,5,7,3,(36),4,8,9,3,5,4,9,2,8,1,7,6,9,8,2,6,1,7,3,4,5,6,7,1,4,(35),(35),9,2,8", 73, 16, ["51RM12345789","23RM12345689","77RM12368","42RM12789"])
+,new step("SIMPLE", "8,2,7,1,(45),(45),6,9,3,1,4,9,3,6,2,8,5,7,5,3,6,8,7,9,2,1,4,4,9,3,5,8,1,7,6,2,7,6,8,2,(49),4,5,3,1,2,1,5,7,3,6,4,8,9,3,5,4,9,2,8,1,7,6,9,8,2,6,1,7,3,4,5,6,7,1,4,5,(35),9,2,8", 77, 8, ["5RM1235678","6RM1246789","78RM12456789","41RM12345678"])
+])
+];
+
+function step(strategyName, sudokuBefore, fixedBefore, candidatesBefore, commands) {
+  this.strategyName = strategyName;
+  this.sudokuBefore = sudokuBefore;
+  this.fixedBefore = fixedBefore;
+  this.candidatesBefore = candidatesBefore;
+  this.commands = commands;
+}
+
+function solution(id, quest, solveable, level, unique, steps) {
+  this.id = id;
+  this.quest = quest;
+  this.solveable = solveable;
+  this.level = level;
+  this.unique = unique;
+  this.steps = steps;
+}
+
+function command(cmdClass, cellNumber, candidateNumber) {
+  this.cmdClass = cmdClass;
+  this.cellNumber = cellNumber;
+  this.candidateNumber = candidateNumber;
+  this.candidateNumbers = null;
+  this.execute = function() {
+    if (cmdClass == "createCandidate") {
+      createCandidateDo(cellNumber, candidateNumber);
+    } else if (cmdClass == "removeCandidate") {
+      removeCandidateDo(cellNumber, candidateNumber);
+    } else if (cmdClass == "setCell") {
+      promoteCandidateDo(cellNumber, candidateNumber);
+    } else if (cmdClass == "unsetCell") {
+      removeFixed(cellNumber, candidateNumber);
+    } else {
+      alert("Unbekannter Befehl: " + cmdClass);
+    }
+    updateStatisticsAsync();
+  }
+  this.unexecute = function() {
+    if (cmdClass == "createCandidate") {
+      removeCandidateDo(cellNumber, candidateNumber);
+    } else if (cmdClass == "removeCandidate") {
+      createCandidateDo(cellNumber, candidateNumber);
+    } else if (cmdClass == "setCell") {
+      buildCandidates(getCellId(cellNumber));
+    } else if (cmdClass == "unsetCell") {
+      promoteCandidateDo(cellNumber, candidateNumber);
+    } else {
+      alert("Unbekannter Befehl: " + cmdClass);
+    }
+    updateStatisticsAsync();
+  }
+}
+
+function resetCmdHistory() {
+  undoCmd = new Array();
+  doCmd = new Array();
+  ableCmdButtons();
+}
+
+function ableCmdButtons() {
+  if (undoCmd.length <= 0) {
+    document.getElementById("undoButton").disabled=true;
+  } else {
+    document.getElementById("undoButton").disabled=false;
+  }
+  if (doCmd.length <= 0) {
+    document.getElementById("doButton").disabled=true;
+  } else {
+    document.getElementById("doButton").disabled=false;
+  }
+}
+
+function createAndExecuteCmd(cmdClass, cellNumber, candidateNumber) {
+  var cmd = new command(cmdClass, cellNumber, candidateNumber);
+  cmd.execute();
+  this.undoCmd.push(cmd);
+  this.doCmd = new Array();
+  ableCmdButtons();
+}
+
+function doCommand() {
+  if (doCmd.length > 0) {
+    var cmd = doCmd.pop();
+    cmd.execute();
+    undoCmd.push(cmd);
+    ableCmdButtons();
+  } else {
+    alert("Es liegen keine Befehle zur AusfÃŒhrung vor.");
+  }
+}
+
+function undoCommand() {
+  if (undoCmd.length > 0) {
+    var cmd = undoCmd.pop();
+    cmd.unexecute();
+    doCmd.push(cmd);
+    ableCmdButtons();
+  } else {
+    alert("Es liegen keine Rückgängig-Befehle zur Ausführung vor.");
+  }
+}
+
+function updateStatisticsAsync() {
+  if (updateStatisticsId != null) {
+    clearTimeout(updateStatisticsId);
+  }
+  updateStatisticsId = setTimeout(updateStatistics, 100);
+}
+
+function updateStatistics() {
+  var fixedCellNumber = 0;
+  var candidateNumber = 0;
+  for (var i = 1; i <= size * size; i++) {
+    if (isCellFixed(i)) {
+      fixedCellNumber++;
+    } else {
+      for (var k = 1; k <= size; k++) {
+        var candidate = getCandidate(i, k);
+        if (candidate.firstChild != null && candidate.firstChild.nodeType == 3) {
+          candidateNumber++;
+        }
+      }
+    }
+    checkConflict(i);
+    checkError(i);
+  }
+  document.getElementById("fixedCellNumber").value = fixedCellNumber;
+  document.getElementById("candidateNumber").value = candidateNumber;
+  var board = document.getElementById("board");
+  if (candidateNumber == 0 && fixedCellNumber == size * size) {
+    if (isSolved()) {
+      board.className = addStyle(board.className, "solved");
+    }
+  } else {
+      board.className = removeStyle(board.className, "solved");
+  }
+}
+
+function switchVisibility(switchId) {
+  var configSwitch = document.getElementById(switchId);
+  var configSwitchBlock = document.getElementById(configSwitch.id + "Block");
+  var content = configSwitch.firstChild.data;
+  if (configSwitch.firstChild.data.match(/^\+$/)) {
+    configSwitch.replaceChild(document.createTextNode("-"), configSwitch.firstChild);
+    configSwitchBlock.style.visibility = "visible";
+    configSwitchBlock.style.display = "block";
+  } else {
+    configSwitch.replaceChild(document.createTextNode("+"), configSwitch.firstChild);
+    configSwitchBlock.style.visibility = "hidden";
+    configSwitchBlock.style.display = "none";
+  }
+}
+
+function addStyle(style, newStyle) {
+  var erg = style.indexOf(newStyle);
+  if (erg >= 0) {
+    return style;
+  } else {
+    return style + " " + newStyle;
+  }
+}
+
+function removeStyle(style, oldStyle) {
+  var erg = style.indexOf(" " + oldStyle);
+  if (erg >= 0) {
+    return style.substr(0, erg);
+  } else {
+    return style;
+  }
+}
+
+function getCell(cellId) {
+  return document.getElementById(cellId);
+}
+
+function getCellId(cellNumber) {
+  return "cell" + cellNumber;
+}
+
+function getCandidate(cellNumber, c) {
+  return document.getElementById(getCandidateId(getCellId(cellNumber), c));
+}
+
+function getCandidateId(cellId, c) {
+  return cellId + "candidate" + c;
+}
+
+function getColumnNumber(cellNumber) {
+  column = cellNumber % size;
+  if (column == 0) {
+    return size;
+  }
+  return column;
+}
+
+function getBlockNumber(cellNumber) {
+  row = getRowNumber(cellNumber);
+  column = getColumnNumber(cellNumber);
+  return Math.floor((row - 1)/ subSize) * subSize + Math.floor((column - 1)/ subSize) + 1;
+}
+
+function getFixedValue(cellNumber) {
+  if (isCellFixed(cellNumber)) {
+    return getValue(getCell(getCellId(cellNumber)));
+  }
+  return null;
+}
+
+function getRowNumber(cellNumber) {
+  return Math.floor((cellNumber - 1)/ size) + 1;
+}
+
+function getValue(node) {
+  return parseInt(node.firstChild.data);
+}
+
+function isCellFixed(cellNumber) {
+  if (getCell(getCellId(cellNumber)).firstChild.nodeType == 3) {
+    return true;
+  }
+  return false;
+}
+
+function buildBoard() {
+  var boardTable = document.createElement("table");
+  boardTable.id = "board";
+  boardTable.border = "0";
+  boardTable.cellPadding = "0";
+  boardTable.cellSpacing = "0";
+  document.getElementById("sudoku").appendChild(boardTable);
+  var row = null;
+  for (var i = 1; i <= size * size; i++) {
+    if (i % size == 1) {
+      var row = document.createElement("tr");
+      row.id = "row" + (Math.floor(i / size) + 1);
+      boardTable.appendChild(row);
+    }
+    var cell = document.createElement("td");
+    cell.id = getCellId(i);
+    cell.className = "fixed block" + getBlockNumber(i);
+    row.appendChild(cell);
+    var cellText = document.createTextNode(i);
+    cell.appendChild(cellText);
+  }
+}
+
+function buildCandidates(cellId) {
+  cell = getCell(cellId);
+  cell.className = removeStyle(cell.className, "original")
+  cell.className = removeStyle(cell.className, "conflict")
+  cell.className = removeStyle(cell.className, "highlight3")
+  cell.onmouseover = null;
+  cell.onmouseout = null;
+  cell.onclick = null;
+  cell.ondblclick = null;
+  candidatesTable = document.createElement("table");
+  candidatesTable.id = cellId + "candidate";
+  candidatesTable.border = "0"
+  candidatesTable.cellPadding = "0";
+  candidatesTable.cellSpacing = "0";
+  var candidatesRow = null;
+  for (var i = 1; i <= size; i++) {
+    if (i % subSize == 1) {
+      candidatesRow = document.createElement("tr");
+      candidatesRow.id = cellId + "row" + (Math.floor(i / subSize) + 1);
+      candidatesTable.appendChild(candidatesRow);
+    }
+    candidatesCell = document.createElement("td");
+    candidatesCell.id = getCandidateId(cellId, i);
+    candidatesCell.className = "candidate";
+    if (document.getElementById("candidateButton" + i).className.match(/candidateButtonOn/g)) {
+      candidatesCell.className = addStyle(candidatesCell.className, "highlight1");
+    }
+    candidatesCell.onmouseover = enterCandidate;
+    candidatesCell.onmouseout = exitCandidate;
+    candidatesCell.onclick = removeCandidate;
+    candidatesCell.ondblclick = promoteCandidate;
+    candidatesRow.appendChild(candidatesCell);
+    if (isSpielweiseKandidatenEntfernen()) {
+      cellText = document.createTextNode(i);
+      candidatesCell.appendChild(cellText);
+    }
+  }
+  cell.replaceChild(candidatesTable, cell.firstChild);
+}
+
+function buildFixed(cellNumber, value) {
+  cell = getCell(getCellId(cellNumber));
+  cell.className = removeStyle(cell.className, "conflict")
+  cell.onmouseover = enterFixed;
+  cell.onmouseout = exitFixed;
+  if (isInOriginal(cellNumber)) {
+    cell.className = addStyle(cell.className, "original");
+  } else {
+    cell.className = removeStyle(cell.className, "original");
+  }
+  var cellText = document.createTextNode(value);
+  cell.replaceChild(cellText, cell.firstChild);
+}
+
+function loadSudoku() {
+  if (document.getElementById("sudokuAsString").value.match(/^[0-9\.]{81}$/)) {
+    original = document.getElementById("sudokuAsString").value;
+    for (var i = 1; i <= size * size; i++) {
+      value = original.substr(i - 1, 1);
+      if (value == ".") {
+        buildCandidates(getCellId(i));
+      } else {
+        buildFixed(i, value);
+      }
+    }
+  } else {
+    if (!parseSudokuString(document.getElementById("sudokuAsString").value)) {
+      alert("Sudoku ist ungültig!");
+    }
+  }
+  resetCmdHistory();
+  updateStatisticsAsync();
+}
+
+function removeAllCandidates() {
+  for (var i = 1; i <= size * size; i++) {
+    if (isCellFixed(i)) {
+      // Nix machen!
+    } else {
+      // Fixed aus Zeile, Spalte und Block sammeln
+      removeCandidates(i);
+    }
+  }
+}
+
+function collectFixed(cellNumber) {
+  var fixed = new Array();
+  for (var i = 1; i <= size; i++) {
+    fixed[i] = false;
+  }
+  for (var i = 1; i <= size * size; i++) {
+    if (i != cellNumber) {
+      if (getRowNumber(i) == getRowNumber(cellNumber)) {
+        if (isCellFixed(i)) {
+          fixed[getFixedValue(i)] = true;
+        }
+      }
+      if (getColumnNumber(i) == getColumnNumber(cellNumber)) {
+        if (isCellFixed(i)) {
+          fixed[getFixedValue(i)] = true;
+        }
+      }
+      if (getBlockNumber(i) == getBlockNumber(cellNumber)) {
+        if (isCellFixed(i)) {
+          fixed[getFixedValue(i)] = true;
+        }
+      }
+    }
+  }
+  return fixed;
+}
+
+function removeCandidates(cellNumber) {
+  var fixed = collectFixed(cellNumber);
+  for (var i = 1; i <= size; i++) {
+    if (fixed[i]) {
+      var candidate = getCandidate(cellNumber, i);
+      if (candidate.firstChild != null && candidate.firstChild.nodeType == 3) {
+        createAndExecuteCmd("removeCandidate", cellNumber, i);
+      }
+    }
+  }
+}
+
+function conflictsCandidate(cellNumber, c) {
+  if (document.getElementById("showConflicts").checked) {
+    return collectFixed(cellNumber)[c];
+  }
+  return false;
+}
+
+function highlightFixedOn(value) {
+  for (var i = 1; i <= size * size; i++) {
+    if (isCellFixed(i)) {
+      var cell = getCell(getCellId(i));
+      if (value == getValue(cell)) {
+        cell.className = addStyle(cell.className, "highlight3");
+      }
+    }
+  }
+}
+
+function highlightFixedOff(value) {
+  for (var i = 1; i <= size * size; i++) {
+    if (isCellFixed(i)) {
+      var cell = getCell(getCellId(i));
+      if (value == getValue(cell)) {
+        cell.className = removeStyle(cell.className, "highlight3");
+      }
+    }
+  }
+}
+
+function enterFixed() {
+  var value = getValue(this);
+  if (document.getElementById("highlightFixed").checked) {
+    this.className = addStyle(this.className, "highlight3");
+  }
+  if (document.getElementById("highlightAllFixed").checked) {
+    highlightFixedOn(value);
+  }
+  if (document.getElementById("highlightAllFixedAndCandidates").checked) {
+    highlightCandidateOn(value, "highlight2");
+  }
+}
+
+function exitFixed() {
+  var value = getValue(this);
+  this.className = removeStyle(this.className, "highlight3");
+  highlightFixedOff(value);
+  highlightCandidateOff(value, "highlight2");
+}
+
+function enterCandidate() {
+  var candidateId = this.id;
+  candidateId.match(/cell(\d+)candidate(\d+)/g);
+  var value = parseInt(RegExp.$2);
+  if (document.getElementById("highlightCandidates").checked) {
+    this.className = addStyle(this.className, "highlight2");
+  }
+  if (document.getElementById("highlightAllCandidates").checked) {
+    highlightCandidateOn(value, "highlight2");
+  }
+  if (document.getElementById("highlightAllCandidatesAndFixed").checked) {
+    highlightFixedOn(value);
+  }
+}
+
+function exitCandidate() {
+  var candidateId = this.id;
+  candidateId.match(/cell(\d+)candidate(\d+)/g);
+  var value = parseInt(RegExp.$2);
+  this.className = removeStyle(this.className, "highlight2");
+  highlightCandidateOff(value, "highlight2");
+  highlightFixedOff(value);
+}
+
+function removeCandidateDo(cellNumber, candidateNumber) {
+  var candidate = getCandidate(cellNumber, candidateNumber);
+  if (candidate.firstChild == null || candidate.firstChild.data.length <= 0) {
+    return;
+  }
+  candidate.className = removeStyle(candidate.className, "highlight1");
+  //candidate.className = removeStyle(candidate.className, "highlight2");
+  candidate.removeChild(candidate.firstChild);
+  highlightCandidateOff(candidateNumber, "highlight2");
+  highlightFixedOff(candidateNumber);
+}
+
+function createCandidateDo(cellNumber, candidateNumber) {
+  var candidate = getCandidate(cellNumber, candidateNumber);
+  candidate.className = addStyle(candidate.className, "candidate");
+  candidate.onmouseover = enterCandidate;
+  candidate.onmouseout = exitCandidate;
+  if (isCandidateButtonOn(candidateNumber)) {
+    candidate.className = addStyle(candidate.className, "highlight1");
+  }
+  candidateText = document.createTextNode(candidateNumber);
+  candidate.appendChild(candidateText);
+}
+
+function createOrRemoveCandidateDo(candidateId) {
+  var candidate = document.getElementById(candidateId);
+  candidateId.match(/cell(\d+)candidate(\d+)/g);
+  if (candidate.firstChild != null && candidate.firstChild.nodeType == 3) {
+    createAndExecuteCmd("removeCandidate", parseInt(RegExp.$1), parseInt(RegExp.$2));
+  } else {
+    createAndExecuteCmd("createCandidate", parseInt(RegExp.$1), parseInt(RegExp.$2));
+  }
+}
+
+function promoteCandidateDo(cellNumber, candidateNumber) {
+  buildFixed(cellNumber, candidateNumber);
+  var cellId = getCellId(cellNumber)
+  var cell = document.getElementById(cellId);
+  cell.replaceChild(document.createTextNode(candidateNumber), cell.firstChild);
+  cell.onclick = resetFixed;
+  checkAllConflicts(cellNumber);
+}
+
+var dblclick = false;
+
+function removeCandidate() {
+  var candidateId = this.id;
+  setTimeout(function() {
+    if (dblclick == true) {
+      return;
+    }
+    createOrRemoveCandidateDo(candidateId);
+  }, 250);
+}
+
+function promoteCandidate() {
+  var candidateId = this.id;
+  dblclick = true;
+  candidateId.match(/cell(\d+)candidate(\d+)/g);
+  var cellNumber = parseInt(RegExp.$1);
+  var candidateNumber = parseInt(RegExp.$2);
+  var candidates = getCandidateArray(cellNumber);
+  for (var i = 0; i < candidates.length; i++) {
+    createAndExecuteCmd("removeCandidate", cellNumber, candidates[i]);
+  }
+  createAndExecuteCmd("setCell", cellNumber, candidateNumber);
+  setTimeout(function() {
+    dblclick = false;
+  }, 250);
+}
+
+function buildCandidateButtons() {
+  var candidateButtons = document.getElementById("candidateButtons");
+  for (var i = 1; i <= size; i++) {
+    var candidateButton = document.createElement("div");
+    candidateButton.id = "candidateButton" + i;
+    candidateButton.className = "candidateButtonOff";
+    candidateButton.onclick = highlightCandidates;
+    candidateButtons.appendChild(candidateButton);
+    candidateButton.appendChild(document.createTextNode(i));
+  }
+}
+
+function highlightCandidateOn(candidate, cssClassName) {
+  for (var i = 1; i <= size * size; i++) {
+    if (!isCellFixed(i)) {
+      for (var k = 1; k <= size; k++) {
+        var candidateNode = getCandidate(i, k);
+        if (candidateNode.childNodes.length > 0 && candidateNode.firstChild.data.length > 0) {
+          if (k == candidate) {
+            candidateNode.className = addStyle(candidateNode.className, cssClassName);
+          }
+        }
+      }
+    }
+  }
+}
+
+function highlightCandidateOff(candidate, cssClassName) {
+  for (var i = 1; i <= size * size; i++) {
+    if (!isCellFixed(i)) {
+      for (var k = 1; k <= size; k++) {
+        var candidateNode = getCandidate(i, k);
+        if (candidateNode.childNodes.length > 0 && candidateNode.firstChild.data.length > 0) {
+          if (k == candidate) {
+            candidateNode.className = removeStyle(candidateNode.className, cssClassName);
+          }
+        }
+      }
+    }
+  }
+}
+
+function highlightCandidates() {
+  var candidate = parseInt(this.id.match(/\d+/g)[0]);
+  if (this.className == "candidateButtonOff") {
+    this.className = "candidateButtonOn";
+    highlightCandidateOn(candidate, "highlight1");
+  } else {
+    this.className = "candidateButtonOff";
+    highlightCandidateOff(candidate, "highlight1");
+  }
+}
+
+function isCandidateButtonOn(value) {
+  for (var i = 1; i <= size; i++) {
+    var candidateButton = document.getElementById("candidateButton" + i);
+    if (candidateButton.className.match(/candidateButtonOn/g)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function removeFixed(cellNumber, candidateNumber) {
+  highlightFixedOff(candidateNumber);
+  highlightCandidateOff(candidateNumber, "highlight2");
+  if (isInOriginal(cellNumber)) {
+    // Nix machen
+  } else {
+    // Reset
+    buildCandidates(getCellId(cellNumber));
+    checkAllConflicts(cellNumber);
+  }
+  if (!isSolved()) {
+    var board = document.getElementById("board");
+    board.className = removeStyle(board.className, "solved");
+  }
+}
+
+function resetFixed() {
+  var cellNumber = parseInt(this.id.match(/\d+/g)[0]);
+  var value = getValue(this);
+  createAndExecuteCmd("unsetCell", cellNumber, value);
+}
+
+function isInOriginal(cellNumber) {
+  var originalChar = original.substr(cellNumber - 1, 1);
+  if (originalChar.match(/\d+/)) {
+    return true;
+  }
+  return false;
+}
+
+function resetAllCandidates() {
+  for (var i = 1; i <= size * size; i++) {
+    if (!isCellFixed(i)) {
+      buildCandidates(getCellId(i));
+    }
+  }
+}
+
+function emptyCandidates() {
+  for (var i = 1; i <= size * size; i++) {
+    if (!isCellFixed(i)) {
+      for (var k = 1; k <= size; k++) {
+        removeCandidateDo(i, k);
+      }
+    }
+  }
+}
+
+function getSudokuById(id) {
+  for (var i = 0; i < sudokus.length; i++) {
+    if (sudokus[i].id == id) {
+      sudoku = sudokus[i];
+    }
+  }
+  return sudoku;
+}
+
+function removeSteps() {
+  var stepsNode = document.getElementById("steps");
+  for (var i = stepsNode.childNodes.length; i > 0; i--) {
+    var lastChildNode = stepsNode.childNodes[i-1];
+    stepsNode.removeChild(lastChildNode);
+  }
+}
+
+function highlightCmd(command, on) {
+  command.match(/(\d+)(\D+)(\d+)/);
+  var cellNumber = RegExp.$1;
+  var cmd = RegExp.$2;
+  var candidateNumbers = RegExp.$3;
+  var style = "highlight2";
+  if (cmd.match(/SV/)) {
+    style = "highlight3";
+  }
+  if (!isCellFixed(cellNumber)) {
+    for (var i = 0; i < candidateNumbers.length; i++) {
+      var candidateNode = getCandidate(cellNumber, candidateNumbers[i]);
+      if (candidateNode.childNodes.length > 0 && candidateNode.firstChild.data.length > 0) {
+        if (on) {
+          candidateNode.className = addStyle(candidateNode.className, style);
+        } else {
+          candidateNode.className = removeStyle(candidateNode.className, style);
+        }
+      }
+    }
+  }
+}
+
+function highlightCmdOn(command) {
+  highlightCmd(command, true);
+}
+
+function highlightCmdOff(command) {
+  highlightCmd(command, false);
+}
+
+function buildCommand(stepNode, command) {
+  var cmdNode = document.createElement("span");
+  domCreateAttr(cmdNode, "onmouseover", "highlightCmdOn('" + command + "')");
+  domCreateAttr(cmdNode, "onmouseout", "highlightCmdOff('" + command + "')");
+  var cmdText = document.createTextNode(command);
+  cmdNode.appendChild(cmdText);
+  stepNode.appendChild(cmdNode);
+}
+
+function domCreateAttr(node, attrName, attrValue) {
+  var attr = document.createAttribute(attrName);
+  attr.nodeValue = attrValue;
+  node.setAttributeNode(attr);
+}
+
+function loadStep(stepNr) {
+  document.getElementById("sudokuAsString").value = sudoku.steps[stepNr].sudokuBefore;
+  loadSudoku();
+}
+
+function buildStep(stepNr, step) {
+  var stepsNode = document.getElementById("steps");
+  var stepNode = document.createElement("p");
+  var stepText = document.createTextNode(" " + step.strategyName + " Vorher: " + step.fixedBefore + " / " + step.candidatesBefore);
+  stepNode.appendChild(stepText);
+  var stepButton = document.createElement("input");
+  domCreateAttr(stepButton, "type", "button");
+  domCreateAttr(stepButton, "value", "Laden");
+  domCreateAttr(stepButton, "onclick", "loadStep('" + stepNr + "')");
+  stepNode.appendChild(stepButton);
+  var stepBreak = document.createElement("br");
+  stepNode.appendChild(stepBreak);
+  for (var i = 0; i < step.commands.length; i++) {
+    if (i != 0) {
+      var cmdText = document.createTextNode(", ");
+      stepNode.appendChild(cmdText);
+    }
+    buildCommand(stepNode, step.commands[i]);
+  }
+  stepsNode.appendChild(stepNode);
+}
+
+function buildSolution() {
+  removeSteps();
+  for (var i = 0; i < sudoku.steps.length; i++) {
+    buildStep(i, sudoku.steps[i]);
+  }
+}
+
+function copyAndLoadSudoku() {
+  getSudokuById(document.getElementById("quests").value);
+  document.getElementById("sudokuAsString").value = sudoku.quest;
+  loadSudoku();
+  buildSolution();
+}
+
+function checkAllConflicts(cellNumber) {
+  for (var i = 1; i <= size * size; i++) {
+    if (getRowNumber(i) == getRowNumber(cellNumber)) {
+      if (isCellFixed(i)) {
+        checkConflict(i);
+      }
+    }
+    if (getColumnNumber(i) == getColumnNumber(cellNumber)) {
+      if (isCellFixed(i)) {
+        checkConflict(i);
+      }
+    }
+    if (getBlockNumber(i) == getBlockNumber(cellNumber)) {
+      if (isCellFixed(i)) {
+        checkConflict(i);
+      }
+    }
+  }
+}
+
+function checkConflict(cellNumber) {
+  var showConflicts = document.getElementById("showConflicts").checked;
+  var cellId = getCellId(cellNumber);
+  var cell = document.getElementById(cellId);
+  if (isCellFixed(cellNumber)) {
+    if (showConflicts && conflictsCandidate(cellNumber, getFixedValue(cellNumber))) {
+      cell.className = addStyle(cell.className, "conflict");
+    } else {
+      cell.className = removeStyle(cell.className, "conflict");
+    }
+  }
+}
+
+function checkError(cellNumber) {
+  var showErrors = document.getElementById("showErrors").checked;
+  var cellId = getCellId(cellNumber);
+  var cell = document.getElementById(cellId);
+  if (showErrors) {
+  	var fixedValue = getFixedValue(cellNumber);
+  	var resultValue = sudoku.solveable[cellNumber];
+  	if (isCellFixed(cellNumber) && getFixedValue(cellNumber) != sudoku.solveable[cellNumber - 1]) {
+      cell.className = addStyle(cell.className, "error");
+    } else {
+    	cell.className = removeStyle(cell.className, "error");
+    }
+  } else {
+    cell.className = removeStyle(cell.className, "error");
+  }
+}
+
+function hideCandidates() {
+  var hideButton = document.getElementById("hideButton");
+  if (hideButton.value == "Ausblenden") {
+    for (var i = 1; i <= size * size; i++) {
+      if (!isCellFixed(i)) {
+        for (var k = 1; k <= size; k++) {
+          var candidate = getCandidate(i, k);
+          candidate.className = addStyle(candidate.className, "hide");
+        }
+      }
+    }
+    hideButton.value = "Einblenden";
+  } else {
+    for (var i = 1; i <= size * size; i++) {
+      if (!isCellFixed(i)) {
+        for (var k = 1; k <= size; k++) {
+          var candidate = getCandidate(i, k);
+          candidate.className = removeStyle(candidate.className, "hide");
+        }
+      }
+    }
+    hideButton.value = "Ausblenden";
+  }
+}
+
+function saveSudoku() {
+  var sudokuAsString = buildSudokuString(false);
+  document.getElementById("sudokuAsString").value = sudokuAsString;
+}
+
+function isSolved() {
+  var sum = (size * (size + 1)) / 2;
+  var rowSum = new Array();
+  var columnSum = new Array();
+  var blockSum = new Array();
+  for (var i = 1; i <= size; i++) {
+    rowSum[i] = 0;
+    columnSum[i] = 0;
+    blockSum[i] = 0;
+  }
+  for (var i = 1; i <= size * size; i++) {
+    if (isCellFixed(i)) {
+      rowSum[getRowNumber(i)] = rowSum[getRowNumber(i)] + getFixedValue(i);
+      columnSum[getColumnNumber(i)] = columnSum[getColumnNumber(i)] + getFixedValue(i);
+      blockSum[getBlockNumber(i)] = blockSum[getBlockNumber(i)] + getFixedValue(i);
+    }
+  }
+  for (var i = 1; i <= size; i++) {
+    if (rowSum[i] != sum) {
+      return false;
+    }
+    if (columnSum[i] != sum) {
+      return false;
+    }
+    if (blockSum[i] != sum) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function eraseCookie(name) {
+  var domain = null; //"jdufner.de";
+  var expires = new Date((new Date()).getTime() - 1000*3600*24).toGMTString();
+  var path = null;
+  //var secure = null;
+  var cook = name + "=";
+  cook += (domain) ? "; domain=" + domain : "";
+  cook += (expires) ? "; expires=" + expires : "";
+  cook += (path) ? "; path=" + path : "";
+  //cook += (secure) ? "; secure" : "";
+  document.cookie = cook;
+}
+
+function setCookie(name, wert) {
+  var domain = null; //"jdufner.de";
+  var expires = new Date((new Date()).getTime() + 1000*3600*24*7).toGMTString();
+  var path = null;
+  //var secure = null;
+  var cook = name + "=" + unescape(wert);
+  cook += (domain) ? "; domain=" + domain : "";
+  cook += (expires) ? "; expires=" + expires : "";
+  cook += (path) ? "; path=" + path : "";
+  //cook += (secure) ? "; secure" : "";
+  document.cookie = cook;
+}
+
+function getCookie(name) {
+  var i = 0;  //Suchposition im Cookie
+  var suche = name + "=";
+  while (i < document.cookie.length) {
+    if (document.cookie.substring(i, i + suche.length) == suche) {
+      var ende = document.cookie.indexOf(";", i + suche.length);
+      if (ende <= -1) {
+        ende = document.cookie.length;
+      }
+      var cook = document.cookie.substring(i + suche.length, ende);
+      return unescape(cook);
+    }
+    i++;
+  }
+  return "";
+}
+
+function getCandidateArray(cellNumber) {
+  var candidates = new Array();
+  for (var i = 1; i <= size; i++) {
+    var candidate = getCandidate(cellNumber, i);
+    if (candidate.firstChild != null && candidate.firstChild.nodeType == 3) {
+      candidates.push(i);
+    }
+  }
+  return candidates;
+}
+
+function buildCandidateString(cellNumber) {
+  if (getCandidateArray(cellNumber).length == 0) {
+    return ""
+  } else {
+    return "(" + getCandidateArray(cellNumber).join("") + ")";
+  }
+}
+
+function buildSudokuString(forceIncloseCandidates) {
+  var sudoku = new Array();
+  var incloseCandidates = document.getElementById("incloseCandidates").checked;
+  for (var i = 1; i <= size * size; i++) {
+    if (isCellFixed(i)) {
+      sudoku[i-1] = getFixedValue(i);
+    } else {
+      if (forceIncloseCandidates || incloseCandidates) {
+        sudoku[i-1] = buildCandidateString(i);
+      } else {
+        sudoku[i-1] = ".";
+      }
+    }
+  }
+  if (forceIncloseCandidates || incloseCandidates) {
+    return sudoku.join(",");
+  } else {
+    return sudoku.join("");
+  }
+}
+
+function saveSudokuInCookie() {
+  var sudokuString = buildSudokuString(true);
+  if (sudokuString.length > 4000) {
+    alert("Sudoku kann nicht gespeichert werden");
+  }
+  setCookie("SudokuAsString", sudokuString);
+}
+
+function buildCandidatesFromString(cellNumber, candidatesString) {
+  var allCandidates = []; // ["1","2","3","4","5","6","7","8","9"];
+  if (candidatesString.length == 0) {
+    if (!isSpielweiseKandidatenEntfernen()) {
+      var cellId = getCellId(cellNumber);
+      buildCandidates(cellId);
+      var candidate = parseInt(allCandidates.shift());
+      for (var k = 1; k <= size; k++) {
+        if (k != candidate) {
+          removeCandidateDo(cellNumber, k);
+        } else {
+          candidate = parseInt(allCandidates.shift());
+        }
+      }
+
+
+    }
+  }
+  if (candidatesString.match(/^\(([0-9]+)\)$/)) {
+    var candidates = RegExp.$1.split("");
+    var cellId = getCellId(cellNumber);
+    buildCandidates(cellId);
+    var candidate = parseInt(candidates.shift());
+    for (var k = 1; k <= size; k++) {
+      if (k != candidate) {
+        removeCandidateDo(cellNumber, k);
+      } else {
+        candidate = parseInt(candidates.shift());
+      }
+    }
+  } else {
+    return false;
+  }
+}
+
+function parseSudokuString(sudokuString) {
+  var sudoku = sudokuString.split(",");
+  original = "";
+  for (var i = 1; i <= size * size; i++) {
+    if (sudoku[i-1].match(/^(\d+)$/)) {
+      // fixed
+      original += parseInt(RegExp.$1);
+    } else {
+      // candidates
+      original += ".";
+    }
+  }
+  for (var i = 1; i <= size * size; i++) {
+    if (sudoku[i-1].match(/^(\d+)$/)) {
+      // fixed
+      buildFixed(i, parseInt(RegExp.$1));
+    } else {
+      // candidates
+      buildCandidatesFromString(i, sudoku[i-1]);
+    }
+  }
+  return true;
+}
+
+function loadSudokuFromCookie() {
+  var sudokuString = getCookie("SudokuAsString");
+  parseSudokuString(sudokuString);
+  resetCmdHistory();
+  updateStatisticsAsync();
+}
+
+function isSpielweiseKandidatenEntfernen() {
+  var kandidatenEntfernen = document.getElementById("kandidatenEntfernen");
+  if (kandidatenEntfernen.checked == true) {
+    return true;
+  }
+  return false;
+}
+
+function buildQuests() {
+  var questsNode = document.getElementById("quests");
+  for (var i = 0; i < this.sudokus.length; i++) {
+    var optionNode = document.createElement("option");
+    var valueAttribute = document.createAttribute("value");
+    valueAttribute.nodeValue = sudokus[i].id;
+    optionNode.setAttributeNode(valueAttribute);
+    var textNode = document.createTextNode(sudokus[i].id + " " + sudokus[i].level);
+    optionNode.appendChild(textNode);
+    questsNode.appendChild(optionNode);
+  }
+}
+
+function saveConfig() {
+  setCookie("showConflicts", document.getElementById("showConflicts").checked)
+  setCookie("showErrors", document.getElementById("showErrors").checked)
+  setCookie("kandidatenEntfernen", document.getElementById("kandidatenEntfernen").checked)
+  setCookie("kandidatenSetzen", document.getElementById("kandidatenSetzen").checked)
+}
+
+function loadConfig() {
+  document.getElementById("showConflicts").checked = getCookie("showConflicts") == "true" ? true : false;
+  document.getElementById("showErrors").checked = getCookie("showErrors") == "true" ? true : false;
+  document.getElementById("kandidatenEntfernen").checked = getCookie("kandidatenEntfernen") == "true" ? true : false;
+  document.getElementById("kandidatenSetzen").checked = getCookie("kandidatenSetzen") == "true" ? true : false;
+}
+
+function turnShowConflicts() {
+  for (var i = 1; i <= size * size; i++) {
+    checkAllConflicts(i);
+  }
+}
+
+function turnShowErrors() {
+  for (var i = 1; i <= size * size; i++) {
+    checkError(i);
+  }
+}
+
+function main() {
+  buildBoard();
+  buildCandidateButtons();
+  buildQuests();
+  loadConfig();
+}
+
+main();
+
+-->
+  </script>
+</html>
