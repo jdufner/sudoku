@@ -25,6 +25,10 @@
  */
 package de.jdufner.sudoku.test;
 
+import de.jdufner.sudoku.context.SolverServiceFactory;
+import de.jdufner.sudoku.solver.service.ExtendedSolver;
+import de.jdufner.sudoku.solver.service.Solver;
+
 /**
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
@@ -32,14 +36,29 @@ package de.jdufner.sudoku.test;
  * @version $Revision$
  * 
  */
-public abstract class AbstractGeneratorTestCase extends AbstractSolverTestCase {
+public abstract class AbstractGeneratorTestCase {
 
-  public AbstractGeneratorTestCase() {
-    super();
+  protected transient Solver backtrackingSolver;
+  protected transient ExtendedSolver strategySolver;
+  protected transient ExtendedSolver strategySolverWithBacktracking;
+
+  protected void setUp() throws Exception {
+    backtrackingSolver = (Solver) SolverServiceFactory.INSTANCE.getBean(SolverServiceFactory.BACKTRACKING_SOLVER);
+    strategySolver = (ExtendedSolver) SolverServiceFactory.INSTANCE.getBean(SolverServiceFactory.STRATEGY_SOLVER);
+    strategySolverWithBacktracking = (ExtendedSolver) SolverServiceFactory.INSTANCE
+        .getBean(SolverServiceFactory.STRATEGY_SOLVER_WITH_BACKTRACKING);
   }
 
-  public AbstractGeneratorTestCase(final String name) {
-    super(name);
+  protected Solver getBacktrackingSolver() {
+    return backtrackingSolver;
+  }
+
+  protected ExtendedSolver getStrategySolver() {
+    return strategySolver;
+  }
+
+  protected ExtendedSolver getStrategySolverWithBacktracking() {
+    return strategySolverWithBacktracking;
   }
 
 }

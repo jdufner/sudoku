@@ -25,9 +25,11 @@
  */
 package de.jdufner.sudoku.dao;
 
-import org.apache.log4j.Logger;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import de.jdufner.sudoku.test.AbstractGeneratorTestCase;
+import org.apache.log4j.Logger;
 
 public class SudokuDataTest extends AbstractGeneratorTestCase {
 

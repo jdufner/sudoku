@@ -25,19 +25,15 @@
  */
 package de.jdufner.sudoku;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 import de.jdufner.sudoku.common.board.Grid;
 import de.jdufner.sudoku.common.factory.SudokuFactory;
-import de.jdufner.sudoku.context.GeneratorServiceFactory;
 import de.jdufner.sudoku.context.SolverServiceFactory;
-import de.jdufner.sudoku.dao.SudokuDao;
 import de.jdufner.sudoku.dao.SudokuData;
 import de.jdufner.sudoku.dao.SudokuMapper;
 import de.jdufner.sudoku.solver.service.ExtendedSolver;
 import de.jdufner.sudoku.solver.service.Solution;
+import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * Applikation zum Starten der SudokuDBMaintenance. Die Klasse SudokuDBMaintenance liest die Sudokus aus der Datenbank,
@@ -67,14 +63,13 @@ public final class SudokuDbMaintenance extends AbstractMainClass {
    */
   protected void run() {
     LOG.debug("START");
-    SudokuDao sudokuDao = (SudokuDao) GeneratorServiceFactory.INSTANCE.getBean(SudokuDao.class);
     ExtendedSolver solver = (ExtendedSolver) SolverServiceFactory.INSTANCE
         .getBean(SolverServiceFactory.STRATEGY_SOLVER_WITH_BACKTRACKING);
     boolean weitereObjekteVorhanden = true;
     int index = 0;
     int number = 10;
     do {
-      List<SudokuData> sudokuDataList = sudokuDao.findSudokus(index, number);
+      List<SudokuData> sudokuDataList = null; //sudokuDao.findSudokus(index, number);
       for (SudokuData sudokuData : sudokuDataList) {
         Grid sudoku = SudokuFactory.INSTANCE.buildSudoku(sudokuData.getSudokuAsString());
         Solution solution = solver.getSolution(sudoku);
@@ -85,7 +80,7 @@ public final class SudokuDbMaintenance extends AbstractMainClass {
       if (sudokuDataList.size() < number) {
         weitereObjekteVorhanden = false;
       }
-      sudokuDao.update(sudokuDataList);
+//      sudokuDao.update(sudokuDataList);
     } while (weitereObjekteVorhanden);
     LOG.debug("ENDE");
   }

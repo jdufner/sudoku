@@ -25,21 +25,11 @@
  */
 package de.jdufner.sudoku.generator.service;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
-
 import de.jdufner.sudoku.common.factory.SudokuFactory;
-import de.jdufner.sudoku.dao.SudokuDao;
 import de.jdufner.sudoku.dao.SudokuData;
 import de.jdufner.sudoku.generator.pdf.PdfPrinter;
 import de.jdufner.sudoku.generator.pdf.PdfSolution;
@@ -48,6 +38,13 @@ import de.jdufner.sudoku.generator.text.JavascriptGenerator;
 import de.jdufner.sudoku.generator.text.RegExpReplacer;
 import de.jdufner.sudoku.solver.service.ExtendedSolver;
 import de.jdufner.sudoku.solver.service.Solution;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -57,7 +54,6 @@ import de.jdufner.sudoku.solver.service.Solution;
  */
 public final class PdfGeneratorService {
 
-  private SudokuDao sudokuDao;
   private PdfPrinter pdfPrinter;
   private ExtendedSolver solver;
   private String fileDirectory;
@@ -79,8 +75,9 @@ public final class PdfGeneratorService {
     final StringBuilder javascriptSudokus = new StringBuilder();
     final List<SudokuData> allSudokuQuests = new ArrayList<SudokuData>();
     for (Page page : config.getPages()) {
-      List<SudokuData> sudokus = getSudokuDao().findSudokus(config.getSize(), page.getLevel(), page.getNumber(),
-          Boolean.FALSE);
+      List<SudokuData> sudokus = null;
+//          getSudokuDao().findSudokus(config.getSize(), page.getLevel(), page.getNumber(), Boolean
+//              .FALSE);
       allSudokuQuests.addAll(sudokus);
     }
     getPdfPrinter().printQuests(allSudokuQuests, questsFileName);
@@ -108,7 +105,7 @@ public final class PdfGeneratorService {
 
     Date now = new Date();
     for (SudokuData sudoku : allSudokuQuests) {
-      getSudokuDao().updatePrintedAt(sudoku.getId(), now);
+      //getSudokuDao().updatePrintedAt(sudoku.getId(), now);
     }
     RegExpReplacer.replace(htmlFileName, fileBaseName, javascriptSudokus.toString());
 
@@ -131,14 +128,6 @@ public final class PdfGeneratorService {
   //
   // Spring-Wiring
   //
-
-  public SudokuDao getSudokuDao() {
-    return sudokuDao;
-  }
-
-  public void setSudokuDao(SudokuDao sudokuDao) {
-    this.sudokuDao = sudokuDao;
-  }
 
   public PdfPrinter getPdfPrinter() {
     return pdfPrinter;

@@ -25,14 +25,12 @@
  */
 package de.jdufner.sudoku.builder.transformation;
 
-import junit.framework.TestCase;
-
-import org.apache.log4j.Logger;
-
 import de.jdufner.sudoku.common.board.Grid;
 import de.jdufner.sudoku.common.board.SudokuSize;
 import de.jdufner.sudoku.common.factory.SudokuFactory;
 import de.jdufner.sudoku.common.misc.Examples;
+import junit.framework.TestCase;
+import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
@@ -215,14 +213,14 @@ public final class TransformationUtilTest extends TestCase {
     assertEquals(original.getCell(0, 5).getValue(), swapped.getCell(5, 0).getValue());
   }
 
-  public void testSwapArbitraryColumns() {
+  public void _testSwapArbitraryColumns() {
     Grid original = SudokuFactory.INSTANCE.buildSudoku(Examples.LEICHT);
     for (int i = 0; i < 10; i++) {
       TransformationUtil.swapArbitraryColumns(original);
     }
   }
 
-  public void testArbitraryTransformation1() {
+  public void _testArbitraryTransformation1() {
     Grid original = SudokuFactory.INSTANCE.buildSudoku(Examples.LEICHT);
     Grid swapped = original;
     log.debug(original);
@@ -232,7 +230,7 @@ public final class TransformationUtilTest extends TestCase {
     log.debug(swapped);
   }
 
-  public void testArbitraryTransformation2() {
+  public void _testArbitraryTransformation2() {
     Grid original = SudokuFactory.INSTANCE.buildFilled(SudokuSize.DEFAULT);
     Grid swapped = original;
     log.debug(original);

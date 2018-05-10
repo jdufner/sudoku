@@ -30,12 +30,10 @@ import de.jdufner.sudoku.builder.RandomEleminationBuilder;
 import de.jdufner.sudoku.builder.SymetricRandomEleminationBuilder;
 import de.jdufner.sudoku.common.misc.Level;
 import de.jdufner.sudoku.context.GeneratorServiceFactory;
-import de.jdufner.sudoku.dao.SudokuDao;
 import de.jdufner.sudoku.solver.service.Solution;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
-import java.util.Map;
 
 /**
  * Erzeugt mindestens ein Sudoku und speichert es in der Datenbank ab.
@@ -49,8 +47,6 @@ public final class SudokuGeneratorService {
   private static final Logger LOG = Logger.getLogger(SudokuGeneratorService.class);
   private static final Logger SUDOKU = Logger.getLogger("sudoku");
 
-  private SudokuDao sudokuDao;
-
   public void generate() {
     generateLiteralEleminationBuilder();
     generateRandomEleminationBuilder();
@@ -61,7 +57,7 @@ public final class SudokuGeneratorService {
     Map<Level, Solution> map = getLiteralEleminationBuilder().buildSudokus();
     for (Level l : map.keySet()) {
       if (map.get(l).getQuest().getNumberOfFixed() <= 30) {
-        sudokuDao.saveSolution(map.get(l));
+//        sudokuDao.saveSolution(map.get(l));
         SUDOKU.info(StringUtils.leftPad(l.toString(), 11) + " " + map.get(l));
       }
     }
@@ -70,7 +66,7 @@ public final class SudokuGeneratorService {
   public void generateRandomEleminationBuilder() {
     Map<Level, Solution> map = getRandomEleminationBuilder().buildSudokus();
     for (Level l : map.keySet()) {
-      sudokuDao.saveSolution(map.get(l));
+//      sudokuDao.saveSolution(map.get(l));
       SUDOKU.info(StringUtils.leftPad(l.toString(), 11) + " " + map.get(l));
     }
   }
@@ -78,7 +74,7 @@ public final class SudokuGeneratorService {
   public void generateSymetricRandomEleminationBuilder() {
     Map<Level, Solution> map = getSymetricRandomEleminationBuilder().buildSudokus();
     for (Level l : map.keySet()) {
-      sudokuDao.saveSolution(map.get(l));
+//      sudokuDao.saveSolution(map.get(l));
       SUDOKU.info(StringUtils.leftPad(l.toString(), 11) + " " + map.get(l));
     }
   }
@@ -94,18 +90,6 @@ public final class SudokuGeneratorService {
   private SymetricRandomEleminationBuilder getSymetricRandomEleminationBuilder() {
     return (SymetricRandomEleminationBuilder) GeneratorServiceFactory.INSTANCE
         .getBean(SymetricRandomEleminationBuilder.class);
-  }
-
-  //
-  // Spring Wiring
-  //
-
-  public SudokuDao getSudokuDao() {
-    return sudokuDao;
-  }
-
-  public void setSudokuDao(SudokuDao sudokuDao) {
-    this.sudokuDao = sudokuDao;
   }
 
 }

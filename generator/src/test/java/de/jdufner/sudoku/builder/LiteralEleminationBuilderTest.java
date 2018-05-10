@@ -25,9 +25,7 @@
  */
 package de.jdufner.sudoku.builder;
 
-import java.util.Map;
-
-import org.apache.log4j.Logger;
+import static org.junit.Assert.assertTrue;
 
 import de.jdufner.sudoku.common.board.Grid;
 import de.jdufner.sudoku.common.board.SudokuSize;
@@ -35,6 +33,8 @@ import de.jdufner.sudoku.common.misc.Level;
 import de.jdufner.sudoku.context.GeneratorServiceFactory;
 import de.jdufner.sudoku.solver.service.Solution;
 import de.jdufner.sudoku.test.AbstractGeneratorTestCase;
+import java.util.Map;
+import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>

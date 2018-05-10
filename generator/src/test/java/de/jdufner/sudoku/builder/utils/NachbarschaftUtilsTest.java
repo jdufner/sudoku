@@ -25,13 +25,15 @@
  */
 package de.jdufner.sudoku.builder.utils;
 
-import org.apache.log4j.Logger;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import de.jdufner.sudoku.common.board.Grid;
 import de.jdufner.sudoku.common.board.SudokuSize;
 import de.jdufner.sudoku.common.factory.SudokuFactory;
 import de.jdufner.sudoku.solver.service.Solver;
 import de.jdufner.sudoku.test.AbstractGeneratorTestCase;
+import org.apache.log4j.Logger;
 
 /**
  * 
