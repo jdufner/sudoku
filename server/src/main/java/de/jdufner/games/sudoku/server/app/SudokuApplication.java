@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author Jürgen Dufner
- * @since 0.3
+ * @since 1.0
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"de.jdufner.games.sudoku.server.controller"})
 public class SudokuApplication {
 
   public static void main(final String[] args) {
