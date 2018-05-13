@@ -348,10 +348,10 @@
               </execution>
             </executions>
           </plugin>
-          <!--plugin>
+          <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>1.4.5</version>
+            <version>3.1.2</version>
             <configuration>
               <cveValidForHours>12</cveValidForHours>
               <failBuildOnCVSS>8</failBuildOnCVSS>
@@ -360,11 +360,12 @@
             <executions>
               <execution>
                 <goals>
+                  <goal>purge</goal>
                   <goal>check</goal>
                 </goals>
               </execution>
             </executions>
-          </plugin-->
+          </plugin>
           <plugin>
             <groupId>org.asciidoctor</groupId>
             <artifactId>asciidoctor-maven-plugin</artifactId>
@@ -383,6 +384,7 @@
               <sourceHighlighter>coderay</sourceHighlighter>
               <attributes>
                 <toc>left</toc>
+                <sectnums>true</sectnums>
               </attributes>
             </configuration>
           </plugin>
@@ -442,7 +444,7 @@
           <!--plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>1.4.5</version>
+            <version>3.1.2</version>
             <configuration>
               <name>Dependency Check</name>
             </configuration>
