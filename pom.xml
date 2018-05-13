@@ -354,13 +354,14 @@
             <version>3.1.2</version>
             <configuration>
               <cveValidForHours>12</cveValidForHours>
-              <failBuildOnCVSS>8</failBuildOnCVSS>
+              <failBuildOnCVSS>11</failBuildOnCVSS>
               <format>XML</format>
             </configuration>
             <executions>
               <execution>
                 <goals>
-                  <goal>purge</goal>
+                  <!-- Activate, if plugin can't connect to the database. -->
+                  <!--goal>purge</goal-->
                   <goal>check</goal>
                 </goals>
               </execution>
