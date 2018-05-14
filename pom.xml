@@ -348,23 +348,47 @@
               </execution>
             </executions>
           </plugin>
-          <!--plugin>
+          <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>1.4.5</version>
+            <version>3.1.2</version>
             <configuration>
               <cveValidForHours>12</cveValidForHours>
-              <failBuildOnCVSS>8</failBuildOnCVSS>
+              <failBuildOnCVSS>11</failBuildOnCVSS>
               <format>XML</format>
             </configuration>
             <executions>
               <execution>
                 <goals>
+                  <!-- Activate, if plugin can't connect to the database. -->
+                  <!--goal>purge</goal-->
                   <goal>check</goal>
                 </goals>
               </execution>
             </executions>
-          </plugin-->
+          </plugin>
+          <plugin>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctor-maven-plugin</artifactId>
+            <version>1.5.6</version>
+            <executions>
+              <execution>
+                <id>output-html</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>process-asciidoc</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <backend>html5</backend>
+              <sourceHighlighter>coderay</sourceHighlighter>
+              <attributes>
+                <toc>left</toc>
+                <sectnums>true</sectnums>
+              </attributes>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
 
@@ -421,7 +445,7 @@
           <!--plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>1.4.5</version>
+            <version>3.1.2</version>
             <configuration>
               <name>Dependency Check</name>
             </configuration>
