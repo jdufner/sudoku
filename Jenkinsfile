@@ -24,6 +24,7 @@ node {
       findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/target/findbugs/findbugsXml.xml', unHealthy: ''
       dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/dependency-check-report.xml', unHealthy: ''
       openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', high: 'FIXME', ignoreCase: true, low: '', normal: 'TODO', pattern: '**/src/main/java/**/*.java, **/src/test/java/**/*.java', unHealthy: ''
+      publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'target/generated-docs/', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
   }
 
 //  stage('Archive') {
