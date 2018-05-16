@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $Id: NonFixed.java 7 2009-12-31 20:46:32Z jdufner $
+
 package de.jdufner.sudoku.common.cellhandlerimpls;
 
 import de.jdufner.sudoku.common.board.Cell;

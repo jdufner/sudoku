@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $Id$
+
 package de.jdufner.sudoku;
 
 import de.jdufner.sudoku.context.GeneratorServiceFactory;

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $Id$
+
 package de.jdufner.sudoku.common.validator.impl;
 
 import java.util.ArrayList;

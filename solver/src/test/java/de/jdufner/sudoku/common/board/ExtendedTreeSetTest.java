@@ -17,10 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $Id$
+
 package de.jdufner.sudoku.common.board;
 
-import de.jdufner.sudoku.common.board.ExtendedTreeSet;
 import de.jdufner.sudoku.test.AbstractSolverTestCase;
 
 /**

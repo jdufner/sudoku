@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $Id: YWingSerialStrategy.java 54 2010-03-08 20:31:48Z jdufner $
+
 package de.jdufner.sudoku.solver.strategy.ywing;
 
 import org.apache.log4j.Logger;

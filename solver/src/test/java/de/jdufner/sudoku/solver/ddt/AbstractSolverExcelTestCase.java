@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// $Id$
+
 package de.jdufner.sudoku.solver.ddt;
 
 import de.jdufner.sudoku.context.SolverServiceFactory;
