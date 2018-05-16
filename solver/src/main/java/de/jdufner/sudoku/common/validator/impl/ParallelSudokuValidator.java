@@ -35,7 +35,7 @@ import de.jdufner.sudoku.context.SolverServiceFactory;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class ParallelSudokuValidator implements SudokuValidator {
 

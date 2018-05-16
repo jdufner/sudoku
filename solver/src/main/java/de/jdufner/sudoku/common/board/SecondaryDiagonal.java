@@ -27,7 +27,7 @@ import java.util.List;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2010-01-15
- * @version $Revision$
+ * 
  */
 public final class SecondaryDiagonal extends House {
 

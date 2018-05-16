@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public enum SolverServiceFactory {
 

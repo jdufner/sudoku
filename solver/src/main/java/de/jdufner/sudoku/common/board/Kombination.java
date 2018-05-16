@@ -35,7 +35,7 @@ import java.util.Set;
  *          Eine Klasse die das Interface {@link Comparable} implementiert.
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class Kombination<T extends Comparable<? super T>> {
   // TODO Iterator implementieren!

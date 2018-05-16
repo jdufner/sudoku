@@ -26,7 +26,7 @@ import de.jdufner.sudoku.common.misc.Level;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2009-12-27
- * @version $Revision$
+ * 
  */
 public interface Strategy {
 

@@ -28,7 +28,7 @@ package de.jdufner.sudoku.common.board;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  * @see Cell
  */
 public interface CellHandler {

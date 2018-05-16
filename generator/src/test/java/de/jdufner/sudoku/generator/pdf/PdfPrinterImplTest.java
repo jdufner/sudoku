@@ -35,7 +35,7 @@ import junit.framework.TestCase;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2009-12-08
- * @version $Revision$
+ * 
  */
 public final class PdfPrinterImplTest extends TestCase {
 

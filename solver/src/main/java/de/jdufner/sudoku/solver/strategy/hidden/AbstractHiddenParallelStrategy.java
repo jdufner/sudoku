@@ -35,7 +35,7 @@ import de.jdufner.sudoku.solver.strategy.AbstractParallelStrategy;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.2
- * @version $Revision$
+ * 
  */
 public abstract class AbstractHiddenParallelStrategy extends AbstractParallelStrategy implements Hidden {
 

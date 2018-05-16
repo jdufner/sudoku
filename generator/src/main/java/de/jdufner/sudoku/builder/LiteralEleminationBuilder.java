@@ -33,7 +33,7 @@ import de.jdufner.sudoku.common.factory.SudokuFactory;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class LiteralEleminationBuilder extends EleminationBuilder {
 

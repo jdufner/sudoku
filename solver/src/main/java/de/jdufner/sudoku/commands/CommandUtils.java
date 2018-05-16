@@ -40,7 +40,7 @@ import de.jdufner.sudoku.common.board.SudokuSize;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 14.03.2010
- * @version $Revision$
+ * 
  */
 public final class CommandUtils {
 

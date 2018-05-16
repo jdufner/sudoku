@@ -45,7 +45,7 @@ import java.util.List;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2009-12-20
- * @version $Revision$
+ * 
  */
 public final class PdfGeneratorService {
 

@@ -44,7 +44,7 @@ import de.jdufner.sudoku.solver.strategy.configuration.StrategyNameEnum;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since
- * @version $Revision$
+ * 
  */
 public abstract class AbstractNakedStrategy extends AbstractStrategy implements NakedUnit, UnitHandler {
 

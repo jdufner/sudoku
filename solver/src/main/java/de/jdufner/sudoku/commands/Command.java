@@ -26,7 +26,7 @@ import de.jdufner.sudoku.common.board.Grid;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since
- * @version $Revision$
+ * 
  */
 public interface Command {
 

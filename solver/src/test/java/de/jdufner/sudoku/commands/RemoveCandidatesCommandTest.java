@@ -37,7 +37,7 @@ import de.jdufner.sudoku.test.AbstractSolverTestCase;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since
- * @version $Revision$
+ * 
  */
 public final class RemoveCandidatesCommandTest extends AbstractSolverTestCase {
 

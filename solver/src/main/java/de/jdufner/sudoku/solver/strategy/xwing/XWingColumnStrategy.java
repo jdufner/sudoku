@@ -45,7 +45,7 @@ import de.jdufner.sudoku.solver.strategy.configuration.StrategyNameEnum;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class XWingColumnStrategy extends AbstractStrategy implements ColumnHandler, Callable<Collection<Command>> {
 

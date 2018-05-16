@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since
- * @version $Revision$
+ * 
  */
 @RunWith(Parameterized.class)
 public final class SudokuFuerProfisTest extends AbstractSolverExcelTestCase {

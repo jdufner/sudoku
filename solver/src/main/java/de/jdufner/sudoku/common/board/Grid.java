@@ -49,7 +49,7 @@ import de.jdufner.sudoku.context.SolverServiceFactory;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  * @see <a
  *      href="http://sudopedia.org/wiki/Grid">http://sudopedia.org/wiki/Grid</a>
  */

@@ -33,7 +33,7 @@ import java.util.TreeSet;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  * @param <E>
  *          Der Typ von den Elementen innerhalb des {@link Set}.
  */

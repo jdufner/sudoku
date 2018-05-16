@@ -28,7 +28,7 @@ import de.jdufner.sudoku.common.board.Literal;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2010-03-10
- * @version $Revision$
+ * 
  */
 public final class ShortStringWithCandidates implements CellHandler {
 

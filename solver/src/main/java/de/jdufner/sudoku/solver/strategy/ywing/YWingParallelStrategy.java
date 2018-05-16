@@ -31,7 +31,7 @@ import de.jdufner.sudoku.solver.strategy.configuration.StrategyNameEnum;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2010-02-20
- * @version $Revision: 54 $
+ * 
  */
 public final class YWingParallelStrategy extends AbstractParallelStrategy {
 

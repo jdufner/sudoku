@@ -25,7 +25,7 @@ package de.jdufner.sudoku.solver.strategy.configuration;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2009-11-24
- * @version $Revision$
+ * 
  */
 public enum StrategyThreadingEnum {
 

@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  * @see http://sudopedia.org/wiki/Row
  */
 public final class Row extends Line {

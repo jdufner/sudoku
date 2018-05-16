@@ -24,7 +24,7 @@ package de.jdufner.sudoku.common.misc;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2009-11-29
- * @version $Revision$
+ * 
  */
 public final class Examples {
 

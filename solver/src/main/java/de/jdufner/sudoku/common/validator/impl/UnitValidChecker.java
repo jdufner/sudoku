@@ -31,7 +31,7 @@ import de.jdufner.sudoku.common.board.House;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class UnitValidChecker implements Callable<Boolean> {
   // private static final Logger LOG = Logger.getLogger(UnitValidChecker.class);

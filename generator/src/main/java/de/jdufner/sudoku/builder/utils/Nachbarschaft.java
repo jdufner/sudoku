@@ -32,7 +32,7 @@ import de.jdufner.sudoku.common.board.Literal;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2009-12-28
- * @version $Revision$
+ * 
  */
 public final class Nachbarschaft {
 

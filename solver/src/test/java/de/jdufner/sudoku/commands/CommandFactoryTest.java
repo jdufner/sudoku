@@ -31,7 +31,7 @@ import de.jdufner.sudoku.test.AbstractSolverTestCase;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 14.03.2010
- * @version $Revision$
+ * 
  */
 public final class CommandFactoryTest extends AbstractSolverTestCase {
 

@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class SymetricRandomEleminationBuilderTest extends AbstractGeneratorTestCase {
   private static final Logger LOG = Logger.getLogger(SymetricRandomEleminationBuilderTest.class);

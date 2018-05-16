@@ -33,7 +33,7 @@ import de.jdufner.sudoku.solver.strategy.configuration.StrategyNameEnum;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2010-03-13
- * @version $Revision$
+ * 
  */
 public final class NakedPairSerialStrategyTest extends AbstractStrategyTestCase {
 

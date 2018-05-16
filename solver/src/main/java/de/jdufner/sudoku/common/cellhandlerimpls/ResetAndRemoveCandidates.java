@@ -34,7 +34,7 @@ import de.jdufner.sudoku.common.board.Grid;
  * @see Cell#removeCandidatesAndSetIfOnlyOneRemains(java.util.Collection)
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class ResetAndRemoveCandidates implements CellHandler {
 

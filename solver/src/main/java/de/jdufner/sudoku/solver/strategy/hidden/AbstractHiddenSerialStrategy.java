@@ -35,7 +35,7 @@ import de.jdufner.sudoku.solver.strategy.AbstractSerialStrategy;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.2
- * @version $Revision$
+ * 
  */
 public abstract class AbstractHiddenSerialStrategy extends AbstractSerialStrategy implements Hidden {
 

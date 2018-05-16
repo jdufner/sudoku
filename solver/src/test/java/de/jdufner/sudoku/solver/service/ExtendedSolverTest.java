@@ -30,7 +30,7 @@ import de.jdufner.sudoku.test.AbstractSolverTestCase;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2009-12-14
- * @version $Revision$
+ * 
  */
 public final class ExtendedSolverTest extends AbstractSolverTestCase {
 

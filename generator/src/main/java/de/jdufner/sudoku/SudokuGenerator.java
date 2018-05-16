@@ -29,7 +29,7 @@ import de.jdufner.sudoku.generator.service.SudokuGeneratorService;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2009-12-27
- * @version $Revision$
+ * 
  */
 public final class SudokuGenerator extends AbstractMainClass {
 

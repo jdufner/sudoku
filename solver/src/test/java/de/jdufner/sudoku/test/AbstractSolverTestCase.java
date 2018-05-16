@@ -29,7 +29,7 @@ import de.jdufner.sudoku.solver.service.Solver;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 2010-02-26
- * @version $Revision$
+ * 
  */
 public abstract class AbstractSolverTestCase extends TestCase {
 

@@ -28,7 +28,7 @@ import de.jdufner.sudoku.context.SolverServiceFactory;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2010-03-06
- * @version $Revision$
+ * 
  */
 public abstract class AbstractMainClass {
 

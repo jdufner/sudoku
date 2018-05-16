@@ -26,7 +26,7 @@ import de.jdufner.sudoku.test.AbstractSolverTestCase;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 21.12.2009
- * @version $Revision$
+ * 
  */
 public final class BlockUtilsTest extends AbstractSolverTestCase {
 

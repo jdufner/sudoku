@@ -25,7 +25,7 @@ import de.jdufner.sudoku.common.board.Cell;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class RandomEleminationBuilder extends EleminationBuilder {
 

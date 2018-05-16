@@ -41,7 +41,7 @@ import de.jdufner.sudoku.solver.strategy.configuration.StrategyNameEnum;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 03.04.2010
- * @version $Revision$
+ * 
  */
 public final class NakedSingleStrategy extends AbstractStrategy implements CellHandler {
 

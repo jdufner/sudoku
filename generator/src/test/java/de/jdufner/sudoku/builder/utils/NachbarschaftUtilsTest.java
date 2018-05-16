@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2009-12-28
- * @version $Revision$
+ * 
  */
 public class NachbarschaftUtilsTest extends AbstractGeneratorTestCase {
 

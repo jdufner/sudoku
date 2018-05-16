@@ -33,7 +33,7 @@ import de.jdufner.sudoku.common.exceptions.SudokuRuntimeException;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class SimpleBlockStrategy extends AbstractSimpleStrategy implements BoxHandler,
     Callable<Collection<Command>> {

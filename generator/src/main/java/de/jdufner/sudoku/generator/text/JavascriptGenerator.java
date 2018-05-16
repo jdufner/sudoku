@@ -32,7 +32,7 @@ import de.jdufner.sudoku.solver.strategy.StrategyResult;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2010-04-01
- * @version $Revision$
+ * 
  */
 public final class JavascriptGenerator {
 

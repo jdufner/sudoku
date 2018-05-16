@@ -24,7 +24,7 @@ package de.jdufner.sudoku.generator.pdf;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2009-12-07
- * @version $Revision$
+ * 
  */
 public final class PdfConstants {
 

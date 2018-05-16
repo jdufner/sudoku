@@ -32,7 +32,7 @@ import de.jdufner.sudoku.common.board.Grid;
 /**
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public class NakedRowStrategy extends AbstractNakedStrategy implements RowHandler, Callable<Collection<Command>> {
 

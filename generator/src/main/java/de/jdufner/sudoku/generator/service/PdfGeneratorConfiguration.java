@@ -33,7 +33,7 @@ import de.jdufner.sudoku.common.misc.Level;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 2010-03-04
- * @version $Revision$
+ * 
  * 
  */
 public final class PdfGeneratorConfiguration {

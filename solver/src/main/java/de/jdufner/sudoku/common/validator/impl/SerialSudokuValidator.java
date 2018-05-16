@@ -28,7 +28,7 @@ import de.jdufner.sudoku.common.validator.SudokuValidator;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class SerialSudokuValidator implements SudokuValidator {
 

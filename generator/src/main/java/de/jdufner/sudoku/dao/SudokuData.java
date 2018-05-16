@@ -41,7 +41,7 @@ import java.util.Date;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">J&uuml;rgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 @Entity
 @Table(name = "SUDOKUS")

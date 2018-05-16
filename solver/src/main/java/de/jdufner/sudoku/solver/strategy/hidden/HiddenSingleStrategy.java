@@ -45,7 +45,7 @@ import de.jdufner.sudoku.solver.strategy.configuration.StrategyNameEnum;
  * 
  * @author <a href="mailto:jdufner@users.sf.net">Jürgen Dufner</a>
  * @since 0.1
- * @version $Revision$
+ * 
  */
 public final class HiddenSingleStrategy extends AbstractStrategy implements UnitHandler {
   private static final Logger LOG = Logger.getLogger(HiddenSingleStrategy.class);
