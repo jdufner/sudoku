@@ -4,9 +4,7 @@
 
 [role="arc42help"]
 ****
-Beschreibt die wesentliche Anforderungen und
-treibenden Kräfte, die Softwarearchitekten und Entwicklungsteams
-berücksichtigen müssen. Dazu gehören die
+Beschreibt die wesentliche Anforderungen und treibenden Kräfte, die Softwarearchitekten und Entwicklungsteams berücksichtigen müssen. Dazu gehören die
 
 * zugrunde liegenden Geschäftsziele, wesentliche Aufgabenstellung und essenzielle fachliche Anforderungen an das System
 * Qualitätsziele für die Architektur
@@ -42,10 +40,7 @@ Gemeint sind hier wirklich Qualitätsziele, die nicht unbedingt mit den Zielen d
 
 
 .Motivation
-Weil Qualitätsziele grundlegende Architekturentscheidungen
-oft maßgeblich beeinflussen, sollten Sie die für Ihre Stakeholder
-relevanten Qualitätsziele kennen, möglichst konkret und
-operationalisierbar.
+Weil Qualitätsziele grundlegende Architekturentscheidungen oft maßgeblich beeinflussen, sollten Sie die für Ihre Stakeholder relevanten Qualitätsziele kennen, möglichst konkret und operationalisierbar.
 
 Wenn Sie als Architekt nicht wissen, woran Ihre Arbeit gemessen wird, ....
 
@@ -74,10 +69,9 @@ Tabelle mit Rollen- oder Personennamen, sowie deren Erwartungshaltung bezüglich
 ****
 
 
-
-[cols="1,1,2" options="header"]
+[cols="1,1,2a" options="header"]
 |===
 |Rolle |Kontakt |Erwartungshaltung
-| _<Rolle-1>_ | _<Kontakt-1>_ | _<Erwartung-1>_
-| _<Rolle-2>_ | _<Kontakt-2>_ | _<Erwartung-2>_ 
+|Architekt, Entwickler |Jürgen Dufner juergen@jdufner.de | * Spaß haben
+* Sudoku erzeugen, die genau meiner Spielstärke entsprechen
 |===
