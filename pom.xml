@@ -318,27 +318,6 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <version>3.0.5</version>
-            <executions>
-              <execution>
-                <id>analyze-compile</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <effort>Max</effort>
-              <failOnError>false</failOnError>
-              <threshold>Low</threshold>
-              <xmlOutput>true</xmlOutput>
-              <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
-            </configuration>
-          </plugin>
-          <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
             <version>3.1.11</version>
@@ -358,7 +337,6 @@
               <effort>Max</effort>
               <fork>true</fork>
               <includeTests>true</includeTests>
-<!--              <xmlOutputDirectory>${project.build.directory}/spotbugs</xmlOutputDirectory>-->
             </configuration>
           </plugin>
           <plugin>

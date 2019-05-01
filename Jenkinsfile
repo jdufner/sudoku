@@ -20,21 +20,6 @@ node {
     junit '**/target/surefire-reports/TEST*.xml, **/target/failsafe-reports/TEST*.xml'
     jacoco classPattern: '**/target/classes', execPattern: '**/target/coverage-reports/jacoco**.exec', sourcePattern: '**/src/main/java'
 
-//    def checkstyle = scanForIssues tool: checkStyle(pattern: '**/target/checkstyle-result.xml')
-//    publishIssues issues: [checkstyle]
-//
-//    def pmd = scanForIssues tool: pmdParser(pattern: '**/target/pmd.xml')
-//    publishIssues issues: [pmd]
-//
-//    def spotbugs = scanForIssues tool: spotBugs(pattern: '**/target/findbugs/findbugsXml.xml')
-//    publishIssues issues: [spotbugs]
-//
-//    publishIssues id: 'analysis', name: 'All Issues',
-//      issues: [checkstyle, pmd, spotbugs],
-//      filters: [includePackage('io.jenkins.plugins.analysis.*')]
-//
-//    openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', high: 'FIXME', ignoreCase: true, low: '', normal: 'TODO', pattern: '**/src/main/java/**/*.java, **/src/test/java/**/*.java', unHealthy: ''
-
     recordIssues tools: [checkStyle(pattern: '**/target/checkstyle-result.xml'),
                          spotBugs(pattern: '**/target/spotbugsXml.xml'),
                          pmdParser(pattern: '**/target/pmd.xml'),
@@ -42,7 +27,6 @@ node {
                          taskScanner(highTags:'FIXME', normalTags:'TODO', includePattern: '**/*.java', excludePattern: 'target/**/*')]
 
     dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/dependency-check-report.xml', unHealthy: ''
-
 
     //publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'target/generated-docs/', reportFiles: 'arc42-template.html', reportName: 'arc42-Template', reportTitles: ''])
   }
