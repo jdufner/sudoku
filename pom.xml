@@ -318,37 +318,26 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <version>3.0.5</version>
-            <configuration>
-              <!--
-                  Enables analysis which takes more memory but finds more bugs.
-                  If you run out of memory, changes the value of the effort element
-                  to 'Low'.
-              -->
-              <effort>Max</effort>
-              <!-- Build doesn't fail if problems are found -->
-              <failOnError>false</failOnError>
-              <!-- Reports all bugs (other values are medium and max) -->
-              <threshold>Low</threshold>
-              <!-- Produces XML report -->
-              <xmlOutput>true</xmlOutput>
-              <!-- Configures the directory in which the XML report is created -->
-              <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
-            </configuration>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-maven-plugin</artifactId>
+            <version>3.1.11</version>
             <executions>
-              <!--
-                  Ensures that FindBugs inspects source code when project is compiled.
-              -->
               <execution>
-                <id>analyze-compile</id>
-                <phase>compile</phase>
+                <id>run-spotbugs</id>
+                <phase>verify</phase>
                 <goals>
-                  <goal>check</goal>
+                  <goal>spotbugs</goal>
                 </goals>
               </execution>
             </executions>
+            <configuration>
+              <failOnError>false</failOnError>
+              <xmlOutput>true</xmlOutput>
+              <threshold>Low</threshold>
+              <effort>Max</effort>
+              <fork>true</fork>
+              <includeTests>true</includeTests>
+            </configuration>
           </plugin>
           <plugin>
             <groupId>org.owasp</groupId>
