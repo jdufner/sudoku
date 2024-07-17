@@ -20,10 +20,10 @@
 
 package de.jdufner.sudoku.generator.service;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import de.jdufner.sudoku.common.factory.SudokuFactory;
 import de.jdufner.sudoku.dao.SudokuData;
 import de.jdufner.sudoku.generator.pdf.PdfPrinter;

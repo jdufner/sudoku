@@ -20,7 +20,7 @@
 
 package de.jdufner.sudoku.generator.service;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 import de.jdufner.sudoku.common.misc.Level;
 import java.io.IOException;
 import junit.framework.TestCase;

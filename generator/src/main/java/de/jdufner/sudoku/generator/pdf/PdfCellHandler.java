@@ -23,10 +23,11 @@ package de.jdufner.sudoku.generator.pdf;
 import java.awt.Color;
 import java.util.Properties;
 
-import com.lowagie.text.Element;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 
 import de.jdufner.sudoku.common.board.BoxUtils;
 import de.jdufner.sudoku.common.board.Cell;
@@ -86,18 +87,18 @@ public final class PdfCellHandler implements CellHandler {
   private void formatZelle(final int zeile, final int spalte, final PdfPCell cell) {
     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
     cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-    cell.setBorderColor(new Color(//
+    cell.setBorderColor(new BaseColor(//
         Integer.parseInt(getPdfStyle().getProperty("sudoku.board.border.color.red")), //
         Integer.parseInt(getPdfStyle().getProperty("sudoku.board.border.color.green")), //
         Integer.parseInt(getPdfStyle().getProperty("sudoku.board.border.color.blue"))));
 
     if (isEvenBlockIndex(zeile, spalte)) {
-      cell.setBackgroundColor(new Color(//
+      cell.setBackgroundColor(new BaseColor(//
           Integer.parseInt(getPdfStyle().getProperty("sudoku.board.background.odd.color.red")), //
           Integer.parseInt(getPdfStyle().getProperty("sudoku.board.background.odd.color.green")), //
           Integer.parseInt(getPdfStyle().getProperty("sudoku.board.background.odd.color.blue"))));
     } else {
-      cell.setBackgroundColor(new Color(//
+      cell.setBackgroundColor(new BaseColor(//
           Integer.parseInt(getPdfStyle().getProperty("sudoku.board.background.even.color.red")), //
           Integer.parseInt(getPdfStyle().getProperty("sudoku.board.background.even.color.green")), //
           Integer.parseInt(getPdfStyle().getProperty("sudoku.board.background.even.color.blue"))));
@@ -143,7 +144,7 @@ public final class PdfCellHandler implements CellHandler {
         candidate[i][j].setPadding(CANDIDATE_PADDING);
         candidate[i][j].setHorizontalAlignment(Element.ALIGN_CENTER);
         candidate[i][j].setVerticalAlignment(Element.ALIGN_MIDDLE);
-        candidate[i][j].setBorderColor(new Color(PdfConstants.RAHMEN_FARBE[0], PdfConstants.RAHMEN_FARBE[1],
+        candidate[i][j].setBorderColor(new BaseColor(PdfConstants.RAHMEN_FARBE[0], PdfConstants.RAHMEN_FARBE[1],
             PdfConstants.RAHMEN_FARBE[2]));
         candidate[i][j].setBorderWidth(PdfConstants.RAHMEN_KEIN);
         if (i > 0) {

@@ -23,7 +23,7 @@ package de.jdufner.sudoku.generator.pdf;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
 import de.jdufner.sudoku.dao.SudokuData;
 

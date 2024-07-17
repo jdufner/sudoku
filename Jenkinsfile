@@ -1,7 +1,7 @@
 node {
 
   stage('Configure') {
-    env.JAVA_HOME="${tool 'jdk8'}"
+    env.JAVA_HOME="${tool 'OpenJDK21'}"
     env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
     sh 'java -version'
   }
@@ -11,7 +11,7 @@ node {
   }
 
   stage('Build') {
-    def mvnHome = tool 'Maven-3.5.0'
+    def mvnHome = tool 'Maven-3.9.8'
     //sh "${mvnHome}/bin/mvn clean install sonar:sonar -U -Pqa"
     sh "${mvnHome}/bin/mvn clean verify -B -V -U -Pqa"
   }
