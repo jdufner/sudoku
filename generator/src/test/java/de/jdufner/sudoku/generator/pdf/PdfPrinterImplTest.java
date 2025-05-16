@@ -41,7 +41,7 @@ public final class PdfPrinterImplTest extends TestCase {
 
   private static final String EXAMPLE = ".5..9...2.6..2...8..7...9...81.............5...69.3......7.2..5...6..4..8.9.5...3";
 
-  public void _testPrint() throws FileNotFoundException, DocumentException {
+  public void _testPrint() throws Exception {
     SudokuData sudokuData = new SudokuData();
     sudokuData.setSudokuAsString(EXAMPLE);
     Grid s = SudokuFactory.INSTANCE.buildSudoku(sudokuData.getSudokuAsString());
