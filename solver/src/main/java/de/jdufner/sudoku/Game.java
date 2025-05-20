@@ -46,8 +46,6 @@ public final class Game {
   public Game(final int id) {
     this.id = id;
 
-    // quest = SudokuFactory.buildSudoku(Examples.ING_DIBA);
-
     final PropertiesLoader propertiesLoader = new PropertiesLoader();
     final String sudokuAsString = propertiesLoader.getSudokuAsString(id);
     quest = SudokuFactory.INSTANCE.buildSudoku(sudokuAsString);
